@@ -4,6 +4,9 @@ from ctgan import load_demo
 real_data = load_demo()
 
 print("start data augumentation")
+print("real_data_columns: ", real_data.columns)
+print("real_data:", real_data)
+
 
 # Names of the columns that are discrete
 discrete_columns = [
