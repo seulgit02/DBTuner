@@ -2,3 +2,6 @@
 *.iml
 data/workloads/*
 !data/workloads/.gitkeep
+
+*.pyc
+__pycache__/
