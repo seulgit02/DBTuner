@@ -1,6 +1,7 @@
 .idea/
 *.iml
 data/workloads/*
+data/knob_info/*
 !data/workloads/.gitkeep
 
 *.pyc
