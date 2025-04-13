@@ -24,6 +24,7 @@ def parse_cnf_file(file_path):
         config[key] = value
     return config
 
+# config 데이터 dataframe으로 가공
 def load_cnf_to_dataframe(config_dir):
     data = []
     for filename in sorted(os.listdir(config_dir)):
@@ -35,11 +36,13 @@ def load_cnf_to_dataframe(config_dir):
     df = pd.DataFrame(data)
     return df
 
+# metric 데이터 dataframe으로 가공
 def load_metric_to_dataframe(config_dir_path):
     df = pd.read_csv(config_dir_path)
     metrics_df = df = df.drop(df.columns[0], axis=1)
     return metrics_df
 
+# CTGAN input으로 넣을 dataframe 생성
 def create_workload_df(config_dir_path, metric_dir_path):
     # configuration data를 dataframe으로 변환
     config_df = load_cnf_to_dataframe(config_dir_path)
@@ -48,7 +51,8 @@ def create_workload_df(config_dir_path, metric_dir_path):
     combined_df = pd.concat([config_df, metrics_df], axis = 1) # df index 번호를 기준으로 concat
     return combined_df
 
-def extract_boolean_like_columns(csv_path: object) -> object:
+# CTGAN에서 discrete value 처리 할 column 추출
+def extract_discrete_columns(csv_path: object) -> object:
     df = pd.read_csv(csv_path)
 
     if 'type' not in df.columns or 'name' not in df.columns:
@@ -57,17 +61,14 @@ def extract_boolean_like_columns(csv_path: object) -> object:
     discrete_knobs = df[df['type'].str.lower() == 'boolean']['name'].dropna().tolist()
     return discrete_knobs
 
-
+# TEST용
 if __name__ == "__main__":
     config_path = "../../../data/workloads/mysql/ycsb_AA/configs"
     result_path = "../../../data/workloads/mysql/ycsb_AA/results/external_metrics_AA.csv"
-    config_df = load_cnf_to_dataframe(config_path)
     combined_df = create_workload_df(config_path, result_path)
 
-    print("config_df: ", len(config_df))
     print("combined_df: ", len(combined_df))
     print(combined_df.columns)
-    print(len(combined_df))
     print(combined_df)
 
 

@@ -3,35 +3,39 @@ import time
 import argparse
 import pandas as pd
 from ctgan import CTGAN
-from util_functions import extract_boolean_like_columns
+from util_functions import create_workload_df, extract_discrete_columns
 
 def main(args):
-    # 데이터 경로 설정
-    target_dir = "../../../data/workloads/mysql/ycsb_AA"
+    # 1. 데이터 경로 설정
+    config_path = "../../../data/workloads/mysql/ycsb_AA/configs"
+    result_path = "../../../data/workloads/mysql/ycsb_AA/results/external_metrics_AA.csv"
     knob_info_path = "../../../data/workloads/mysql/Knob_Information_MySQL_v5.7.csv"
-    external_metrics_path = "../../../data/workloads/mysql/ycsb_AA/results/external_metrics_AA.csv"
-    # CSV 로드
-    real_data = pd.read_csv(external_metrics_path)
+
+
+    # 2. [MySQL] Workload data를 Dataframe으로 변환하여 불러오기
+    combined_df = create_workload_df(config_path, result_path)
+
     # data info 출력
-    print("Columns: ", real_data.columns)
-    print("Preview: ", real_data.head())
-    # discrete column 추출
-    discrete_columns = extract_boolean_like_columns(knob_info_path)
-    filtered_discrete_columns = [col for col in discrete_columns if col in real_data.columns]
+    print("Columns: ", combined_df.columns)
+    print("Preview: ", combined_df.head())
+
+    # 3. discrete column 처리
+    discrete_columns = extract_discrete_columns(knob_info_path)
+    filtered_discrete_columns = [col for col in discrete_columns if col in combined_df.columns]
     print("filtered_discrete_columns: ", filtered_discrete_columns)
 
-    # CTGAN 모델 학습
+    # 4. CTGAN 모델 학습
     ctgan = CTGAN(epochs=10) # epoch 늘리면 어케되는거지
-    ctgan.fit(real_data, discrete_columns=filtered_discrete_columns)
+    ctgan.fit(combined_df, discrete_columns=filtered_discrete_columns)
 
-    # 샘플 수 계산 및 생성
-    n_samples = len(real_data) * args.multiplier
+    # 5. 샘플 수 지정(multiplier default 값 = 5)
+    n_samples = len(combined_df) * args.multiplier
     synthetic_data = ctgan.sample(n_samples)
 
-    # 6. 저장
-    output_path = "../../../data/workloads/mysql/ctgan_data/result.csv"
+    # 6. 데이터 증강 및 저장
+    output_path = "../../../data/workloads/mysql/ctgan_data/ycsb_AA_result.csv"
     synthetic_data.to_csv(output_path, index=False)
-    print(f"[✔] Generated {n_samples} synthetic rows.")
+    print(f"[✔] Generated {len(synthetic_data)} synthetic rows.")
     print(f"[💾] Saved to {output_path}")
 
 if __name__ == "__main__":
