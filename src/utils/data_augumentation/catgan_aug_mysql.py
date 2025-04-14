@@ -11,9 +11,9 @@ def main(args):
 
     for workload in workload_list:
         # 1. 데이터 경로 설정
-        config_path = f"../../../data/workloads/mysql/ycsb_{workload}/configs"
+        config_path = f"../../../data/workloads/mysql/original_data/ycsb_{workload}/configs"
         print(config_path)
-        result_path = f"../../../data/workloads/mysql/ycsb_{workload}/results/external_metrics_{workload}.csv"
+        result_path = f"../../../data/workloads/mysql/original_data/ycsb_{workload}/results/external_metrics_{workload}.csv"
         print(result_path)
         # 2. [MySQL] Workload data를 Dataframe으로 변환하여 불러오기
         combined_df = create_workload_df(config_path, result_path)
