@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 import os
 
 # cnf file 전처리
@@ -49,6 +50,7 @@ def create_workload_df(config_dir_path, metric_dir_path):
     # metric data를 dataframe으로 변환
     metrics_df = load_metric_to_dataframe(metric_dir_path)
     combined_df = pd.concat([config_df, metrics_df], axis = 1) # df index 번호를 기준으로 concat
+    combined_df = remove_problematic_rows(combined_df)
     return combined_df
 
 # CTGAN에서 discrete value 처리 할 column 추출
@@ -60,6 +62,14 @@ def extract_discrete_columns(csv_path: object) -> object:
 
     discrete_knobs = df[df['type'].str.lower() == 'boolean']['name'].dropna().tolist()
     return discrete_knobs
+def remove_problematic_rows(df, threshold=1e100):
+    df.replace([np.inf, -np.inf], np.nan, inplace=True)
+    df = df.applymap(lambda x: np.nan if isinstance(x, (int, float)) and abs(x) > threshold else x)
+    # Nan 있는 결측행 제거
+    cleaned_df = df.dropna()
+    removed_row = len(df) - len(cleaned_df)
+    print("제거된 결측행 개수 = ", removed_row)
+    return cleaned_df
 
 # TEST용
 if __name__ == "__main__":
