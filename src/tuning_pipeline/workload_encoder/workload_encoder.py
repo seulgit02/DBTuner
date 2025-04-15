@@ -6,7 +6,6 @@ from collections import Counter
     [Workload 인코딩] (SQL 단인 인코딩의 평균 벡터) + (Query Type 통계)로 구성.
     Query Type 통계는 R/W 비율처럼 쿼리 특성 반영하는데 사용.
     
-    
     sample) 
     Workload vector shape: (19,)
     ➤ Workload Structure Avg: [0.375 0.125 0.125 0.125 0.125 0.    0.125 0.5   0.    0.5   0.125 0.   ]

@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
 import os
+import json
 
-# cnf file 전처리
+# [MySQL] cnf file 전처리
 def parse_cnf_file(file_path):
     # dataframe 형태로 만들어야 함.
     config = {}
@@ -25,7 +26,43 @@ def parse_cnf_file(file_path):
         config[key] = value
     return config
 
-# config 데이터 dataframe으로 가공
+# [PostgreSQL] cnf file 전처리
+def parse_postgres_cnf_file(file_path):
+    with open(file_path, 'r') as f:
+        config_list = json.load(f)
+    return config_list
+
+# [PostgreSQL] metric 데이터 dataframe으로 가공
+def load_postgres_metrics_file(file_path):
+    with open(file_path, 'r') as f:
+        return json.load(f)
+
+# [PostgreSQL] CTGAN data input용 dataframe 가공
+def create_postgres_workload_df(config_dir):
+    all_data =[]
+    config_files = sorted([f for f in os.listdir(config_dir) if f.startswith("configs_")])
+    result_files = sorted([f for f in os.listdir(config_dir) if f.startswith("results_")])
+
+    assert len(config_files) == len(result_files), "Config와 Result 파일 개수가 다릅니다!"
+
+    for config_file, result_file in zip(config_files, result_files):
+        config_path = os.path.join(config_dir, config_file)
+        result_path = os.path.join(config_dir, result_file)
+
+        config_list = parse_postgres_cnf_file(config_path)
+        result_list = load_postgres_metrics_file(result_path)
+
+        assert len(config_list) == len(result_list), f"{config_file}과 {result_file}의 행 수가 일치하지 않습니다!"
+
+        for config_row, result_row in zip(config_list, result_list):
+            merged = config_row.copy()
+            merged["result"] = result_row
+            all_data.append(merged)
+    df = pd.DataFrame(all_data)
+    return df
+
+
+# [MySQL] config 데이터 dataframe으로 가공
 def load_cnf_to_dataframe(config_dir):
     data = []
     for filename in sorted(os.listdir(config_dir)):
@@ -37,13 +74,15 @@ def load_cnf_to_dataframe(config_dir):
     df = pd.DataFrame(data)
     return df
 
-# metric 데이터 dataframe으로 가공
-def load_metric_to_dataframe(config_dir_path):
-    df = pd.read_csv(config_dir_path)
+# [MySQL] metric 데이터 dataframe으로 가공
+def load_metric_to_dataframe(metric_dir_path):
+    df = pd.read_csv(metric_dir_path)
     metrics_df = df = df.drop(df.columns[0], axis=1)
     return metrics_df
 
-# CTGAN input으로 넣을 dataframe 생성
+
+
+# [MySQL] CTGAN input으로 넣을 dataframe 생성
 def create_workload_df(config_dir_path, metric_dir_path):
     # configuration data를 dataframe으로 변환
     config_df = load_cnf_to_dataframe(config_dir_path)
@@ -53,7 +92,7 @@ def create_workload_df(config_dir_path, metric_dir_path):
     combined_df = remove_problematic_rows(combined_df)
     return combined_df
 
-# CTGAN에서 discrete value 처리 할 column 추출
+# [MySQL] CTGAN에서 discrete value 처리 할 column 추출
 def extract_discrete_columns(csv_path: object) -> object:
     df = pd.read_csv(csv_path)
 
@@ -75,11 +114,14 @@ def remove_problematic_rows(df, threshold=1e100):
 if __name__ == "__main__":
     config_path = "../../../data/workloads/mysql/ycsb_AA/configs"
     result_path = "../../../data/workloads/mysql/ycsb_AA/results/external_metrics_AA.csv"
-    combined_df = create_workload_df(config_path, result_path)
+    #combined_df = create_workload_df(config_path, result_path)
+    p_config_path = "../../../data/workloads/postgresql/original_data/ycsb-a"
 
-    print("combined_df: ", len(combined_df))
-    print(combined_df.columns)
-    print(combined_df)
+    postgres_df = create_postgres_workload_df(p_config_path)
+
+    print("combined_df: ", len(postgres_df))
+    print(postgres_df.columns)
+    print(postgres_df)
 
 
 

@@ -31,7 +31,7 @@ def find_similarity_workloads(current_vector, historical_vectors, historical_ids
 def majority_vote_knobs(current_vector, historical_vectors, knob_lists, knob_nums=3, top_k=5, threshold=0.7):
     """
        current_vector와 유사한 top_k historical workload 중
-       similarity ≥ threshold(=default는 0.7)인 것만 고려해서 knob selection 진행.
+       similarity ≥ threshold(=default는 0.8)인 것만 고려해서 knob selection 진행.
        similarity >= threshold인 historical workloads 없으면 top-1만 가져와서 knob selection 진행.
     """
     similar_workloads = find_similarity_workloads(current_vector, historical_vectors, top_k=5, threshold=0.7)
@@ -39,7 +39,7 @@ def majority_vote_knobs(current_vector, historical_vectors, knob_lists, knob_num
 
     key_knobs = []
     for i in top_indiecs:
-        key_knobs.extend(knob_lists[i])
+        key_knobs.extend(knob_listsq[i])
 
     knob_counts = Counter(key_knobs)
     sorted_knobs = [knob for knob, _ in knob_counts.most_common()]
