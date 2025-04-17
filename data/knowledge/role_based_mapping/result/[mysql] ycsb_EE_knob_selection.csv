@@ -1,4 +1,0 @@
-mysql_knob,role,postgresql_knobs
-innodb_buffer_pool_size,role_001,['shared_buffers']
-max_heap_table_size,role_028,['work_mem']
-sync_binlog,role_003,['wal_writer_delay']

@@ -2,6 +2,7 @@
 *.iml
 data/workloads/*
 data/knob_info/*
+data/knowledge/role_based_mapping/result/*
 !data/workloads/.gitkeep
 
 *.pyc

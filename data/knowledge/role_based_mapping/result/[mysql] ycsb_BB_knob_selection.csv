@@ -1,3 +1,0 @@
-mysql_knob,role,postgresql_knobs
-innodb_thread_concurrency,role_059,['max_parallel_workers']
-innodb_log_buffer_size,role_026,['wal_buffers']
