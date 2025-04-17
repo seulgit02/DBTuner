@@ -1,0 +1,1743 @@
+{
+  "role_000": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_flush_log_at_trx_commit' \u2194 'synchronous_commit'",
+    "MySQL": [
+      "innodb_flush_log_at_trx_commit"
+    ],
+    "PostgreSQL": [
+      "synchronous_commit"
+    ]
+  },
+  "role_001": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_buffer_pool_size' \u2194 'shared_buffers'",
+    "MySQL": [
+      "innodb_buffer_pool_size"
+    ],
+    "PostgreSQL": [
+      "shared_buffers"
+    ]
+  },
+  "role_002": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_log_file_size' \u2194 'wal_segment_size'",
+    "MySQL": [
+      "innodb_log_file_size"
+    ],
+    "PostgreSQL": [
+      "wal_segment_size"
+    ]
+  },
+  "role_003": {
+    "description": "Expert-curated mapping based on documentation and usage: 'sync_binlog' \u2194 'wal_writer_delay'",
+    "MySQL": [
+      "sync_binlog"
+    ],
+    "PostgreSQL": [
+      "wal_writer_delay"
+    ]
+  },
+  "role_004": {
+    "description": "Expert-curated mapping based on documentation and usage: 'max_connections' \u2194 'max_connections'",
+    "MySQL": [
+      "max_connections"
+    ],
+    "PostgreSQL": [
+      "max_connections"
+    ]
+  },
+  "role_005": {
+    "description": "Expert-curated mapping based on documentation and usage: 'table_open_cache' \u2194 'max_files_per_process'",
+    "MySQL": [
+      "table_open_cache"
+    ],
+    "PostgreSQL": [
+      "max_files_per_process"
+    ]
+  },
+  "role_006": {
+    "description": "Expert-curated mapping based on documentation and usage: 'thread_cache_size' \u2194 'max_worker_processes'",
+    "MySQL": [
+      "thread_cache_size"
+    ],
+    "PostgreSQL": [
+      "max_worker_processes"
+    ]
+  },
+  "role_007": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_read_io_threads' \u2194 'max_parallel_maintenance_workers'",
+    "MySQL": [
+      "innodb_read_io_threads"
+    ],
+    "PostgreSQL": [
+      "max_parallel_maintenance_workers"
+    ]
+  },
+  "role_008": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_write_io_threads' \u2194 'parallel_tuple_cost'",
+    "MySQL": [
+      "innodb_write_io_threads"
+    ],
+    "PostgreSQL": [
+      "parallel_tuple_cost"
+    ]
+  },
+  "role_009": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_io_capacity' \u2194 'effective_io_concurrency'",
+    "MySQL": [
+      "innodb_io_capacity"
+    ],
+    "PostgreSQL": [
+      "effective_io_concurrency"
+    ]
+  },
+  "role_010": {
+    "description": "Expert-curated mapping based on documentation and usage: 'query_cache_type' \u2194 'jit'",
+    "MySQL": [
+      "query_cache_type"
+    ],
+    "PostgreSQL": [
+      "jit"
+    ]
+  },
+  "role_011": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_flush_method' \u2194 'wal_sync_method'",
+    "MySQL": [
+      "innodb_flush_method"
+    ],
+    "PostgreSQL": [
+      "wal_sync_method"
+    ]
+  },
+  "role_012": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_max_dirty_pages_pct' \u2194 'bgwriter_lru_maxpages'",
+    "MySQL": [
+      "innodb_max_dirty_pages_pct"
+    ],
+    "PostgreSQL": [
+      "bgwriter_lru_maxpages"
+    ]
+  },
+  "role_013": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_flush_neighbors' \u2194 'bgwriter_flush_after'",
+    "MySQL": [
+      "innodb_flush_neighbors"
+    ],
+    "PostgreSQL": [
+      "bgwriter_flush_after"
+    ]
+  },
+  "role_014": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_adaptive_flushing' \u2194 'bgwriter_delay'",
+    "MySQL": [
+      "innodb_adaptive_flushing"
+    ],
+    "PostgreSQL": [
+      "bgwriter_delay"
+    ]
+  },
+  "role_015": {
+    "description": "Expert-curated mapping based on documentation and usage: 'long_query_time' \u2194 'log_min_duration_statement'",
+    "MySQL": [
+      "long_query_time"
+    ],
+    "PostgreSQL": [
+      "log_min_duration_statement"
+    ]
+  },
+  "role_016": {
+    "description": "Expert-curated mapping based on documentation and usage: 'slow_query_log' \u2194 'log_statement'",
+    "MySQL": [
+      "slow_query_log"
+    ],
+    "PostgreSQL": [
+      "log_statement"
+    ]
+  },
+  "role_017": {
+    "description": "Expert-curated mapping based on documentation and usage: 'log_queries_not_using_indexes' \u2194 'log_executor_stats'",
+    "MySQL": [
+      "log_queries_not_using_indexes"
+    ],
+    "PostgreSQL": [
+      "log_executor_stats"
+    ]
+  },
+  "role_018": {
+    "description": "Expert-curated mapping based on documentation and usage: 'binlog_format' \u2194 'wal_level'",
+    "MySQL": [
+      "binlog_format"
+    ],
+    "PostgreSQL": [
+      "wal_level"
+    ]
+  },
+  "role_019": {
+    "description": "Expert-curated mapping based on documentation and usage: 'binlog_row_image' \u2194 'full_page_writes'",
+    "MySQL": [
+      "binlog_row_image"
+    ],
+    "PostgreSQL": [
+      "full_page_writes"
+    ]
+  },
+  "role_020": {
+    "description": "Expert-curated mapping based on documentation and usage: 'event_scheduler' \u2194 'track_activities'",
+    "MySQL": [
+      "event_scheduler"
+    ],
+    "PostgreSQL": [
+      "track_activities"
+    ]
+  },
+  "role_021": {
+    "description": "Expert-curated mapping based on documentation and usage: 'general_log' \u2194 'log_connections'",
+    "MySQL": [
+      "general_log"
+    ],
+    "PostgreSQL": [
+      "log_connections"
+    ]
+  },
+  "role_022": {
+    "description": "Expert-curated mapping based on documentation and usage: 'explicit_defaults_for_timestamp' \u2194 'default_with_oids'",
+    "MySQL": [
+      "explicit_defaults_for_timestamp"
+    ],
+    "PostgreSQL": [
+      "default_with_oids"
+    ]
+  },
+  "role_023": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_autoinc_lock_mode' \u2194 'default_statistics_target'",
+    "MySQL": [
+      "innodb_autoinc_lock_mode"
+    ],
+    "PostgreSQL": [
+      "default_statistics_target"
+    ]
+  },
+  "role_024": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_old_blocks_time' \u2194 'random_page_cost'",
+    "MySQL": [
+      "innodb_old_blocks_time"
+    ],
+    "PostgreSQL": [
+      "random_page_cost"
+    ]
+  },
+  "role_025": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_change_buffering' \u2194 'autovacuum_naptime'",
+    "MySQL": [
+      "innodb_change_buffering"
+    ],
+    "PostgreSQL": [
+      "autovacuum_naptime"
+    ]
+  },
+  "role_026": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_log_buffer_size' \u2194 'wal_buffers'",
+    "MySQL": [
+      "innodb_log_buffer_size"
+    ],
+    "PostgreSQL": [
+      "wal_buffers"
+    ]
+  },
+  "role_027": {
+    "description": "Expert-curated mapping based on documentation and usage: 'tmp_table_size' \u2194 'temp_buffers'",
+    "MySQL": [
+      "tmp_table_size"
+    ],
+    "PostgreSQL": [
+      "temp_buffers"
+    ]
+  },
+  "role_028": {
+    "description": "Expert-curated mapping based on documentation and usage: 'max_heap_table_size' \u2194 'work_mem'",
+    "MySQL": [
+      "max_heap_table_size"
+    ],
+    "PostgreSQL": [
+      "work_mem"
+    ]
+  },
+  "role_029": {
+    "description": "Expert-curated mapping based on documentation and usage: 'join_buffer_size' \u2194 'enable_hashjoin'",
+    "MySQL": [
+      "join_buffer_size"
+    ],
+    "PostgreSQL": [
+      "enable_hashjoin"
+    ]
+  },
+  "role_030": {
+    "description": "Expert-curated mapping based on documentation and usage: 'sort_buffer_size' \u2194 'enable_sort'",
+    "MySQL": [
+      "sort_buffer_size"
+    ],
+    "PostgreSQL": [
+      "enable_sort"
+    ]
+  },
+  "role_031": {
+    "description": "Expert-curated mapping based on documentation and usage: 'read_rnd_buffer_size' \u2194 'enable_indexonlyscan'",
+    "MySQL": [
+      "read_rnd_buffer_size"
+    ],
+    "PostgreSQL": [
+      "enable_indexonlyscan"
+    ]
+  },
+  "role_032": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_stats_persistent' \u2194 'track_counts'",
+    "MySQL": [
+      "innodb_stats_persistent"
+    ],
+    "PostgreSQL": [
+      "track_counts"
+    ]
+  },
+  "role_033": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_stats_auto_recalc' \u2194 'track_io_timing'",
+    "MySQL": [
+      "innodb_stats_auto_recalc"
+    ],
+    "PostgreSQL": [
+      "track_io_timing"
+    ]
+  },
+  "role_034": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_file_per_table' \u2194 'default_tablespace'",
+    "MySQL": [
+      "innodb_file_per_table"
+    ],
+    "PostgreSQL": [
+      "default_tablespace"
+    ]
+  },
+  "role_035": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_strict_mode' \u2194 'standard_conforming_strings'",
+    "MySQL": [
+      "innodb_strict_mode"
+    ],
+    "PostgreSQL": [
+      "standard_conforming_strings"
+    ]
+  },
+  "role_036": {
+    "description": "Expert-curated mapping based on documentation and usage: 'sql_mode' \u2194 'check_function_bodies'",
+    "MySQL": [
+      "sql_mode"
+    ],
+    "PostgreSQL": [
+      "check_function_bodies"
+    ]
+  },
+  "role_037": {
+    "description": "Expert-curated mapping based on documentation and usage: 'optimizer_search_depth' \u2194 'enable_indexscan'",
+    "MySQL": [
+      "optimizer_search_depth"
+    ],
+    "PostgreSQL": [
+      "enable_indexscan"
+    ]
+  },
+  "role_038": {
+    "description": "Expert-curated mapping based on documentation and usage: 'optimizer_prune_level' \u2194 'constraint_exclusion'",
+    "MySQL": [
+      "optimizer_prune_level"
+    ],
+    "PostgreSQL": [
+      "constraint_exclusion"
+    ]
+  },
+  "role_039": {
+    "description": "Expert-curated mapping based on documentation and usage: 'autocommit' \u2194 'default_transaction_read_only'",
+    "MySQL": [
+      "autocommit"
+    ],
+    "PostgreSQL": [
+      "default_transaction_read_only"
+    ]
+  },
+  "role_040": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_lock_wait_timeout' \u2194 'lock_timeout'",
+    "MySQL": [
+      "innodb_lock_wait_timeout"
+    ],
+    "PostgreSQL": [
+      "lock_timeout"
+    ]
+  },
+  "role_041": {
+    "description": "Expert-curated mapping based on documentation and usage: 'interactive_timeout' \u2194 'statement_timeout'",
+    "MySQL": [
+      "interactive_timeout"
+    ],
+    "PostgreSQL": [
+      "statement_timeout"
+    ]
+  },
+  "role_042": {
+    "description": "Expert-curated mapping based on documentation and usage: 'wait_timeout' \u2194 'idle_in_transaction_session_timeout'",
+    "MySQL": [
+      "wait_timeout"
+    ],
+    "PostgreSQL": [
+      "idle_in_transaction_session_timeout"
+    ]
+  },
+  "role_043": {
+    "description": "Expert-curated mapping based on documentation and usage: 'net_read_timeout' \u2194 'tcp_keepalives_idle'",
+    "MySQL": [
+      "net_read_timeout"
+    ],
+    "PostgreSQL": [
+      "tcp_keepalives_idle"
+    ]
+  },
+  "role_044": {
+    "description": "Expert-curated mapping based on documentation and usage: 'net_write_timeout' \u2194 'tcp_keepalives_interval'",
+    "MySQL": [
+      "net_write_timeout"
+    ],
+    "PostgreSQL": [
+      "tcp_keepalives_interval"
+    ]
+  },
+  "role_045": {
+    "description": "Expert-curated mapping based on documentation and usage: 'eq_range_index_dive_limit' \u2194 'geqo_threshold'",
+    "MySQL": [
+      "eq_range_index_dive_limit"
+    ],
+    "PostgreSQL": [
+      "geqo_threshold"
+    ]
+  },
+  "role_046": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_max_purge_lag' \u2194 'vacuum_cost_limit'",
+    "MySQL": [
+      "innodb_max_purge_lag"
+    ],
+    "PostgreSQL": [
+      "vacuum_cost_limit"
+    ]
+  },
+  "role_047": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_purge_batch_size' \u2194 'vacuum_cost_page_hit'",
+    "MySQL": [
+      "innodb_purge_batch_size"
+    ],
+    "PostgreSQL": [
+      "vacuum_cost_page_hit"
+    ]
+  },
+  "role_048": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_max_purge_lag_delay' \u2194 'vacuum_cost_page_miss'",
+    "MySQL": [
+      "innodb_max_purge_lag_delay"
+    ],
+    "PostgreSQL": [
+      "vacuum_cost_page_miss"
+    ]
+  },
+  "role_049": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_rollback_on_timeout' \u2194 'deadlock_timeout'",
+    "MySQL": [
+      "innodb_rollback_on_timeout"
+    ],
+    "PostgreSQL": [
+      "deadlock_timeout"
+    ]
+  },
+  "role_050": {
+    "description": "Expert-curated mapping based on documentation and usage: 'binlog_cache_size' \u2194 'wal_keep_size'",
+    "MySQL": [
+      "binlog_cache_size"
+    ],
+    "PostgreSQL": [
+      "wal_keep_size"
+    ]
+  },
+  "role_051": {
+    "description": "Expert-curated mapping based on documentation and usage: 'expire_logs_days' \u2194 'archive_timeout'",
+    "MySQL": [
+      "expire_logs_days"
+    ],
+    "PostgreSQL": [
+      "archive_timeout"
+    ]
+  },
+  "role_052": {
+    "description": "Expert-curated mapping based on documentation and usage: 'log_bin_trust_function_creators' \u2194 'log_checkpoints'",
+    "MySQL": [
+      "log_bin_trust_function_creators"
+    ],
+    "PostgreSQL": [
+      "log_checkpoints"
+    ]
+  },
+  "role_053": {
+    "description": "Expert-curated mapping based on documentation and usage: 'read_buffer_size' \u2194 'seq_page_cost'",
+    "MySQL": [
+      "read_buffer_size"
+    ],
+    "PostgreSQL": [
+      "seq_page_cost"
+    ]
+  },
+  "role_054": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_sort_buffer_size' \u2194 'work_mem'",
+    "MySQL": [
+      "innodb_sort_buffer_size"
+    ],
+    "PostgreSQL": [
+      "work_mem"
+    ]
+  },
+  "role_055": {
+    "description": "Expert-curated mapping based on documentation and usage: 'query_alloc_block_size' \u2194 'maintenance_work_mem'",
+    "MySQL": [
+      "query_alloc_block_size"
+    ],
+    "PostgreSQL": [
+      "maintenance_work_mem"
+    ]
+  },
+  "role_056": {
+    "description": "Expert-curated mapping based on documentation and usage: 'bulk_insert_buffer_size' \u2194 'maintenance_io_concurrency'",
+    "MySQL": [
+      "bulk_insert_buffer_size"
+    ],
+    "PostgreSQL": [
+      "maintenance_io_concurrency"
+    ]
+  },
+  "role_057": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_commit_concurrency' \u2194 'max_pred_locks_per_transaction'",
+    "MySQL": [
+      "innodb_commit_concurrency"
+    ],
+    "PostgreSQL": [
+      "max_pred_locks_per_transaction"
+    ]
+  },
+  "role_058": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_concurrency_tickets' \u2194 'max_locks_per_transaction'",
+    "MySQL": [
+      "innodb_concurrency_tickets"
+    ],
+    "PostgreSQL": [
+      "max_locks_per_transaction"
+    ]
+  },
+  "role_059": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_thread_concurrency' \u2194 'max_parallel_workers'",
+    "MySQL": [
+      "innodb_thread_concurrency"
+    ],
+    "PostgreSQL": [
+      "max_parallel_workers"
+    ]
+  },
+  "role_060": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_random_read_ahead' \u2194 'effective_cache_size'",
+    "MySQL": [
+      "innodb_random_read_ahead"
+    ],
+    "PostgreSQL": [
+      "effective_cache_size"
+    ]
+  },
+  "role_061": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_read_ahead_threshold' \u2194 'enable_bitmapscan'",
+    "MySQL": [
+      "innodb_read_ahead_threshold"
+    ],
+    "PostgreSQL": [
+      "enable_bitmapscan"
+    ]
+  },
+  "role_062": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_stats_sample_pages' \u2194 'default_statistics_target'",
+    "MySQL": [
+      "innodb_stats_sample_pages"
+    ],
+    "PostgreSQL": [
+      "default_statistics_target"
+    ]
+  },
+  "role_063": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_purge_threads' \u2194 'autovacuum_max_workers'",
+    "MySQL": [
+      "innodb_purge_threads"
+    ],
+    "PostgreSQL": [
+      "autovacuum_max_workers"
+    ]
+  },
+  "role_064": {
+    "description": "Expert-curated mapping based on documentation and usage: 'innodb_spin_wait_delay' \u2194 'spin_delay'",
+    "MySQL": [
+      "innodb_spin_wait_delay"
+    ],
+    "PostgreSQL": [
+      "spin_delay"
+    ]
+  },
+  "role_065": {
+    "description": "Expert-curated mapping based on documentation and usage: 'transaction_isolation' \u2194 'default_transaction_isolation'",
+    "MySQL": [
+      "transaction_isolation"
+    ],
+    "PostgreSQL": [
+      "default_transaction_isolation"
+    ]
+  },
+  "role_066": {
+    "description": "Expert-curated mapping based on documentation and usage: 'query_cache_size' \u2194 'jit_above_cost'",
+    "MySQL": [
+      "query_cache_size"
+    ],
+    "PostgreSQL": [
+      "jit_above_cost"
+    ]
+  },
+  "role_067": {
+    "description": "Expert-curated mapping based on documentation and usage: 'query_cache_limit' \u2194 'jit_inline_above_cost'",
+    "MySQL": [
+      "query_cache_limit"
+    ],
+    "PostgreSQL": [
+      "jit_inline_above_cost"
+    ]
+  },
+  "role_068": {
+    "description": "Expert-curated mapping based on documentation and usage: 'binlog_stmt_cache_size' \u2194 'wal_writer_flush_after'",
+    "MySQL": [
+      "binlog_stmt_cache_size"
+    ],
+    "PostgreSQL": [
+      "wal_writer_flush_after"
+    ]
+  },
+  "role_069": {
+    "description": "MySQL-specific knob 'net_buffer_length', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "net_buffer_length"
+    ],
+    "PostgreSQL": null
+  },
+  "role_070": {
+    "description": "MySQL-specific knob 'range_alloc_block_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "range_alloc_block_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_071": {
+    "description": "MySQL-specific knob 'innodb_stats_on_metadata', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_stats_on_metadata"
+    ],
+    "PostgreSQL": null
+  },
+  "role_072": {
+    "description": "MySQL-specific knob 'stored_program_cache', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "stored_program_cache"
+    ],
+    "PostgreSQL": null
+  },
+  "role_073": {
+    "description": "MySQL-specific knob 'ft_query_expansion_limit', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "ft_query_expansion_limit"
+    ],
+    "PostgreSQL": null
+  },
+  "role_074": {
+    "description": "MySQL-specific knob 'table_definition_cache', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "table_definition_cache"
+    ],
+    "PostgreSQL": null
+  },
+  "role_075": {
+    "description": "MySQL-specific knob 'max_write_lock_count', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "max_write_lock_count"
+    ],
+    "PostgreSQL": null
+  },
+  "role_076": {
+    "description": "MySQL-specific knob 'key_cache_division_limit', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "key_cache_division_limit"
+    ],
+    "PostgreSQL": null
+  },
+  "role_077": {
+    "description": "MySQL-specific knob 'innodb_max_undo_log_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_max_undo_log_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_078": {
+    "description": "MySQL-specific knob 'binlog_group_commit_sync_delay', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "binlog_group_commit_sync_delay"
+    ],
+    "PostgreSQL": null
+  },
+  "role_079": {
+    "description": "MySQL-specific knob 'preload_buffer_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "preload_buffer_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_080": {
+    "description": "MySQL-specific knob 'innodb_fill_factor', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_fill_factor"
+    ],
+    "PostgreSQL": null
+  },
+  "role_081": {
+    "description": "MySQL-specific knob 'innodb_compression_failure_threshold_pct', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_compression_failure_threshold_pct"
+    ],
+    "PostgreSQL": null
+  },
+  "role_082": {
+    "description": "MySQL-specific knob 'query_prealloc_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "query_prealloc_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_083": {
+    "description": "MySQL-specific knob 'updatable_views_with_limit', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "updatable_views_with_limit"
+    ],
+    "PostgreSQL": null
+  },
+  "role_084": {
+    "description": "MySQL-specific knob 'innodb_use_native_aio', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_use_native_aio"
+    ],
+    "PostgreSQL": null
+  },
+  "role_085": {
+    "description": "MySQL-specific knob 'innodb_print_all_deadlocks', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_print_all_deadlocks"
+    ],
+    "PostgreSQL": null
+  },
+  "role_086": {
+    "description": "MySQL-specific knob 'innodb_compression_pad_pct_max', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_compression_pad_pct_max"
+    ],
+    "PostgreSQL": null
+  },
+  "role_087": {
+    "description": "MySQL-specific knob 'innodb_ft_min_token_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_ft_min_token_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_088": {
+    "description": "MySQL-specific knob 'binlog_rows_query_log_events', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "binlog_rows_query_log_events"
+    ],
+    "PostgreSQL": null
+  },
+  "role_089": {
+    "description": "MySQL-specific knob 'innodb_sync_spin_loops', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_sync_spin_loops"
+    ],
+    "PostgreSQL": null
+  },
+  "role_090": {
+    "description": "MySQL-specific knob 'div_precision_increment', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "div_precision_increment"
+    ],
+    "PostgreSQL": null
+  },
+  "role_091": {
+    "description": "MySQL-specific knob 'key_cache_age_threshold', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "key_cache_age_threshold"
+    ],
+    "PostgreSQL": null
+  },
+  "role_092": {
+    "description": "MySQL-specific knob 'end_markers_in_json', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "end_markers_in_json"
+    ],
+    "PostgreSQL": null
+  },
+  "role_093": {
+    "description": "MySQL-specific knob 'innodb_log_write_ahead_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_log_write_ahead_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_094": {
+    "description": "MySQL-specific knob 'max_error_count', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "max_error_count"
+    ],
+    "PostgreSQL": null
+  },
+  "role_095": {
+    "description": "MySQL-specific knob 'max_binlog_stmt_cache_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "max_binlog_stmt_cache_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_096": {
+    "description": "MySQL-specific knob 'innodb_rollback_segments', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_rollback_segments"
+    ],
+    "PostgreSQL": null
+  },
+  "role_097": {
+    "description": "MySQL-specific knob 'innodb_ft_total_cache_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_ft_total_cache_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_098": {
+    "description": "MySQL-specific knob 'max_sort_length', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "max_sort_length"
+    ],
+    "PostgreSQL": null
+  },
+  "role_099": {
+    "description": "MySQL-specific knob 'innodb_undo_log_truncate', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_undo_log_truncate"
+    ],
+    "PostgreSQL": null
+  },
+  "role_100": {
+    "description": "MySQL-specific knob 'table_open_cache_instances', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "table_open_cache_instances"
+    ],
+    "PostgreSQL": null
+  },
+  "role_101": {
+    "description": "MySQL-specific knob 'ngram_token_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "ngram_token_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_102": {
+    "description": "MySQL-specific knob 'innodb_ft_sort_pll_degree', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_ft_sort_pll_degree"
+    ],
+    "PostgreSQL": null
+  },
+  "role_103": {
+    "description": "MySQL-specific knob 'session_track_schema', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "session_track_schema"
+    ],
+    "PostgreSQL": null
+  },
+  "role_104": {
+    "description": "MySQL-specific knob 'query_cache_wlock_invalidate', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "query_cache_wlock_invalidate"
+    ],
+    "PostgreSQL": null
+  },
+  "role_105": {
+    "description": "MySQL-specific knob 'innodb_ft_num_word_optimize', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_ft_num_word_optimize"
+    ],
+    "PostgreSQL": null
+  },
+  "role_106": {
+    "description": "MySQL-specific knob 'max_binlog_cache_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "max_binlog_cache_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_107": {
+    "description": "MySQL-specific knob 'back_log', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "back_log"
+    ],
+    "PostgreSQL": null
+  },
+  "role_108": {
+    "description": "MySQL-specific knob 'max_length_for_sort_data', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "max_length_for_sort_data"
+    ],
+    "PostgreSQL": null
+  },
+  "role_109": {
+    "description": "MySQL-specific knob 'innodb_online_alter_log_max_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_online_alter_log_max_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_110": {
+    "description": "MySQL-specific knob 'innodb_purge_rseg_truncate_frequency', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_purge_rseg_truncate_frequency"
+    ],
+    "PostgreSQL": null
+  },
+  "role_111": {
+    "description": "MySQL-specific knob 'transaction_alloc_block_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "transaction_alloc_block_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_112": {
+    "description": "MySQL-specific knob 'innodb_stats_include_delete_marked', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_stats_include_delete_marked"
+    ],
+    "PostgreSQL": null
+  },
+  "role_113": {
+    "description": "MySQL-specific knob 'ft_min_word_len', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "ft_min_word_len"
+    ],
+    "PostgreSQL": null
+  },
+  "role_114": {
+    "description": "MySQL-specific knob 'innodb_autoextend_increment', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_autoextend_increment"
+    ],
+    "PostgreSQL": null
+  },
+  "role_115": {
+    "description": "MySQL-specific knob 'innodb_page_cleaners', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_page_cleaners"
+    ],
+    "PostgreSQL": null
+  },
+  "role_116": {
+    "description": "MySQL-specific knob 'innodb_ft_cache_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_ft_cache_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_117": {
+    "description": "MySQL-specific knob 'innodb_flush_sync', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_flush_sync"
+    ],
+    "PostgreSQL": null
+  },
+  "role_118": {
+    "description": "MySQL-specific knob 'innodb_ft_result_cache_limit', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_ft_result_cache_limit"
+    ],
+    "PostgreSQL": null
+  },
+  "role_119": {
+    "description": "MySQL-specific knob 'session_track_state_change', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "session_track_state_change"
+    ],
+    "PostgreSQL": null
+  },
+  "role_120": {
+    "description": "MySQL-specific knob 'max_binlog_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "max_binlog_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_121": {
+    "description": "MySQL-specific knob 'default_week_format', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "default_week_format"
+    ],
+    "PostgreSQL": null
+  },
+  "role_122": {
+    "description": "MySQL-specific knob 'innodb_adaptive_hash_index_parts', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_adaptive_hash_index_parts"
+    ],
+    "PostgreSQL": null
+  },
+  "role_123": {
+    "description": "MySQL-specific knob 'innodb_deadlock_detect', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_deadlock_detect"
+    ],
+    "PostgreSQL": null
+  },
+  "role_124": {
+    "description": "MySQL-specific knob 'innodb_max_dirty_pages_pct_lwm', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_max_dirty_pages_pct_lwm"
+    ],
+    "PostgreSQL": null
+  },
+  "role_125": {
+    "description": "MySQL-specific knob 'flush_time', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "flush_time"
+    ],
+    "PostgreSQL": null
+  },
+  "role_126": {
+    "description": "MySQL-specific knob 'innodb_lru_scan_depth', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_lru_scan_depth"
+    ],
+    "PostgreSQL": null
+  },
+  "role_127": {
+    "description": "MySQL-specific knob 'query_cache_min_res_unit', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "query_cache_min_res_unit"
+    ],
+    "PostgreSQL": null
+  },
+  "role_128": {
+    "description": "MySQL-specific knob 'innodb_io_capacity_max', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_io_capacity_max"
+    ],
+    "PostgreSQL": null
+  },
+  "role_129": {
+    "description": "MySQL-specific knob 'innodb_ft_enable_diag_print', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_ft_enable_diag_print"
+    ],
+    "PostgreSQL": null
+  },
+  "role_130": {
+    "description": "MySQL-specific knob 'max_prepared_stmt_count', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "max_prepared_stmt_count"
+    ],
+    "PostgreSQL": null
+  },
+  "role_131": {
+    "description": "MySQL-specific knob 'innodb_compression_level', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_compression_level"
+    ],
+    "PostgreSQL": null
+  },
+  "role_132": {
+    "description": "MySQL-specific knob 'innodb_adaptive_max_sleep_delay', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_adaptive_max_sleep_delay"
+    ],
+    "PostgreSQL": null
+  },
+  "role_133": {
+    "description": "MySQL-specific knob 'automatic_sp_privileges', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "automatic_sp_privileges"
+    ],
+    "PostgreSQL": null
+  },
+  "role_134": {
+    "description": "MySQL-specific knob 'binlog_group_commit_sync_no_delay_count', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "binlog_group_commit_sync_no_delay_count"
+    ],
+    "PostgreSQL": null
+  },
+  "role_135": {
+    "description": "MySQL-specific knob 'innodb_change_buffer_max_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_change_buffer_max_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_136": {
+    "description": "MySQL-specific knob 'local_infile', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "local_infile"
+    ],
+    "PostgreSQL": null
+  },
+  "role_137": {
+    "description": "MySQL-specific knob 'innodb_table_locks', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_table_locks"
+    ],
+    "PostgreSQL": null
+  },
+  "role_138": {
+    "description": "MySQL-specific knob 'innodb_cmp_per_index_enabled', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_cmp_per_index_enabled"
+    ],
+    "PostgreSQL": null
+  },
+  "role_139": {
+    "description": "MySQL-specific knob 'max_points_in_geometry', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "max_points_in_geometry"
+    ],
+    "PostgreSQL": null
+  },
+  "role_140": {
+    "description": "MySQL-specific knob 'innodb_open_files', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_open_files"
+    ],
+    "PostgreSQL": null
+  },
+  "role_141": {
+    "description": "MySQL-specific knob 'key_buffer_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "key_buffer_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_142": {
+    "description": "MySQL-specific knob 'key_cache_block_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "key_cache_block_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_143": {
+    "description": "MySQL-specific knob 'innodb_sync_array_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_sync_array_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_144": {
+    "description": "MySQL-specific knob 'max_digest_length', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "max_digest_length"
+    ],
+    "PostgreSQL": null
+  },
+  "role_145": {
+    "description": "MySQL-specific knob 'group_concat_max_len', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "group_concat_max_len"
+    ],
+    "PostgreSQL": null
+  },
+  "role_146": {
+    "description": "MySQL-specific knob 'innodb_disable_sort_file_cache', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_disable_sort_file_cache"
+    ],
+    "PostgreSQL": null
+  },
+  "role_147": {
+    "description": "MySQL-specific knob 'innodb_replication_delay', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_replication_delay"
+    ],
+    "PostgreSQL": null
+  },
+  "role_148": {
+    "description": "MySQL-specific knob 'max_allowed_packet', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "max_allowed_packet"
+    ],
+    "PostgreSQL": null
+  },
+  "role_149": {
+    "description": "MySQL-specific knob 'transaction_prealloc_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "transaction_prealloc_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_150": {
+    "description": "MySQL-specific knob 'innodb_optimize_fulltext_only', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_optimize_fulltext_only"
+    ],
+    "PostgreSQL": null
+  },
+  "role_151": {
+    "description": "MySQL-specific knob 'log_slow_admin_statements', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "log_slow_admin_statements"
+    ],
+    "PostgreSQL": null
+  },
+  "role_152": {
+    "description": "MySQL-specific knob 'innodb_ft_enable_stopword', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_ft_enable_stopword"
+    ],
+    "PostgreSQL": null
+  },
+  "role_153": {
+    "description": "MySQL-specific knob 'show_compatibility_56', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "show_compatibility_56"
+    ],
+    "PostgreSQL": null
+  },
+  "role_154": {
+    "description": "MySQL-specific knob 'innodb_ft_max_token_size', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_ft_max_token_size"
+    ],
+    "PostgreSQL": null
+  },
+  "role_155": {
+    "description": "MySQL-specific knob 'innodb_stats_transient_sample_pages', no PostgreSQL match defined in expert mapping.",
+    "MySQL": [
+      "innodb_stats_transient_sample_pages"
+    ],
+    "PostgreSQL": null
+  },
+  "role_156": {
+    "description": "PostgreSQL-specific knob 'checkpoint_timeout', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "checkpoint_timeout"
+    ]
+  },
+  "role_157": {
+    "description": "PostgreSQL-specific knob 'vacuum_freeze_table_age', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "vacuum_freeze_table_age"
+    ]
+  },
+  "role_158": {
+    "description": "PostgreSQL-specific knob 'backend_flush_after', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "backend_flush_after"
+    ]
+  },
+  "role_159": {
+    "description": "PostgreSQL-specific knob 'autovacuum_vacuum_scale_factor', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum_vacuum_scale_factor"
+    ]
+  },
+  "role_160": {
+    "description": "PostgreSQL-specific knob 'vacuum_freeze_min_age', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "vacuum_freeze_min_age"
+    ]
+  },
+  "role_161": {
+    "description": "PostgreSQL-specific knob 'autovacuum_analyze_threshold', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum_analyze_threshold"
+    ]
+  },
+  "role_162": {
+    "description": "PostgreSQL-specific knob 'vacuum_cost_page_dirty', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "vacuum_cost_page_dirty"
+    ]
+  },
+  "role_163": {
+    "description": "PostgreSQL-specific knob 'vacuum_cost_delay', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "vacuum_cost_delay"
+    ]
+  },
+  "role_164": {
+    "description": "PostgreSQL-specific knob 'enable_parallel_append', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_parallel_append"
+    ]
+  },
+  "role_165": {
+    "description": "PostgreSQL-specific knob 'enable_parallel_hash', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_parallel_hash"
+    ]
+  },
+  "role_166": {
+    "description": "PostgreSQL-specific knob 'min_wal_size', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "min_wal_size"
+    ]
+  },
+  "role_167": {
+    "description": "PostgreSQL-specific knob 'min_parallel_index_scan_size', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "min_parallel_index_scan_size"
+    ]
+  },
+  "role_168": {
+    "description": "PostgreSQL-specific knob 'max_stack_depth', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "max_stack_depth"
+    ]
+  },
+  "role_169": {
+    "description": "PostgreSQL-specific knob 'geqo_selection_bias', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "geqo_selection_bias"
+    ]
+  },
+  "role_170": {
+    "description": "PostgreSQL-specific knob 'hash_mem_multiplier', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "hash_mem_multiplier"
+    ]
+  },
+  "role_171": {
+    "description": "PostgreSQL-specific knob 'cpu_tuple_cost', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "cpu_tuple_cost"
+    ]
+  },
+  "role_172": {
+    "description": "PostgreSQL-specific knob 'temp_file_limit', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "temp_file_limit"
+    ]
+  },
+  "role_173": {
+    "description": "PostgreSQL-specific knob 'parallel_leader_participation', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "parallel_leader_participation"
+    ]
+  },
+  "role_174": {
+    "description": "PostgreSQL-specific knob 'autovacuum_vacuum_threshold', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum_vacuum_threshold"
+    ]
+  },
+  "role_175": {
+    "description": "PostgreSQL-specific knob 'autovacuum_vacuum_cost_delay', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum_vacuum_cost_delay"
+    ]
+  },
+  "role_176": {
+    "description": "PostgreSQL-specific knob 'wal_init_zero', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "wal_init_zero"
+    ]
+  },
+  "role_177": {
+    "description": "PostgreSQL-specific knob 'autovacuum_freeze_max_age', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum_freeze_max_age"
+    ]
+  },
+  "role_178": {
+    "description": "PostgreSQL-specific knob 'commit_siblings', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "commit_siblings"
+    ]
+  },
+  "role_179": {
+    "description": "PostgreSQL-specific knob 'cpu_operator_cost', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "cpu_operator_cost"
+    ]
+  },
+  "role_180": {
+    "description": "PostgreSQL-specific knob 'autovacuum_vacuum_cost_limit', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum_vacuum_cost_limit"
+    ]
+  },
+  "role_181": {
+    "description": "PostgreSQL-specific knob 'join_collapse_limit', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "join_collapse_limit"
+    ]
+  },
+  "role_182": {
+    "description": "PostgreSQL-specific knob 'quote_all_identifiers', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "quote_all_identifiers"
+    ]
+  },
+  "role_183": {
+    "description": "PostgreSQL-specific knob 'commit_delay', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "commit_delay"
+    ]
+  },
+  "role_184": {
+    "description": "PostgreSQL-specific knob 'logical_decoding_work_mem', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "logical_decoding_work_mem"
+    ]
+  },
+  "role_185": {
+    "description": "PostgreSQL-specific knob 'enable_gathermerge', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_gathermerge"
+    ]
+  },
+  "role_186": {
+    "description": "PostgreSQL-specific knob 'enable_incremental_sort', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_incremental_sort"
+    ]
+  },
+  "role_187": {
+    "description": "PostgreSQL-specific knob 'checkpoint_flush_after', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "checkpoint_flush_after"
+    ]
+  },
+  "role_188": {
+    "description": "PostgreSQL-specific knob 'enable_material', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_material"
+    ]
+  },
+  "role_189": {
+    "description": "PostgreSQL-specific knob 'parallel_setup_cost', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "parallel_setup_cost"
+    ]
+  },
+  "role_190": {
+    "description": "PostgreSQL-specific knob 'old_snapshot_threshold', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "old_snapshot_threshold"
+    ]
+  },
+  "role_191": {
+    "description": "PostgreSQL-specific knob 'enable_hashagg', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_hashagg"
+    ]
+  },
+  "role_192": {
+    "description": "PostgreSQL-specific knob 'autovacuum_analyze_scale_factor', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum_analyze_scale_factor"
+    ]
+  },
+  "role_193": {
+    "description": "PostgreSQL-specific knob 'data_sync_retry', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "data_sync_retry"
+    ]
+  },
+  "role_194": {
+    "description": "PostgreSQL-specific knob 'cursor_tuple_fraction', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "cursor_tuple_fraction"
+    ]
+  },
+  "role_195": {
+    "description": "PostgreSQL-specific knob 'vacuum_multixact_freeze_table_age', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "vacuum_multixact_freeze_table_age"
+    ]
+  },
+  "role_196": {
+    "description": "PostgreSQL-specific knob 'autovacuum', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum"
+    ]
+  },
+  "role_197": {
+    "description": "PostgreSQL-specific knob 'max_prepared_transactions', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "max_prepared_transactions"
+    ]
+  },
+  "role_198": {
+    "description": "PostgreSQL-specific knob 'wal_log_hints', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "wal_log_hints"
+    ]
+  },
+  "role_199": {
+    "description": "PostgreSQL-specific knob 'enable_nestloop', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_nestloop"
+    ]
+  },
+  "role_200": {
+    "description": "PostgreSQL-specific knob 'bgwriter_lru_multiplier', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "bgwriter_lru_multiplier"
+    ]
+  },
+  "role_201": {
+    "description": "PostgreSQL-specific knob 'jit_optimize_above_cost', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "jit_optimize_above_cost"
+    ]
+  },
+  "role_202": {
+    "description": "PostgreSQL-specific knob 'wal_skip_threshold', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "wal_skip_threshold"
+    ]
+  },
+  "role_203": {
+    "description": "PostgreSQL-specific knob 'vacuum_multixact_freeze_min_age', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "vacuum_multixact_freeze_min_age"
+    ]
+  },
+  "role_204": {
+    "description": "PostgreSQL-specific knob 'wal_recycle', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "wal_recycle"
+    ]
+  },
+  "role_205": {
+    "description": "PostgreSQL-specific knob 'enable_mergejoin', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_mergejoin"
+    ]
+  },
+  "role_206": {
+    "description": "PostgreSQL-specific knob 'max_pred_locks_per_page', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "max_pred_locks_per_page"
+    ]
+  },
+  "role_207": {
+    "description": "PostgreSQL-specific knob 'max_parallel_workers_per_gather', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "max_parallel_workers_per_gather"
+    ]
+  },
+  "role_208": {
+    "description": "PostgreSQL-specific knob 'enable_partition_pruning', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_partition_pruning"
+    ]
+  },
+  "role_209": {
+    "description": "PostgreSQL-specific knob 'autovacuum_multixact_freeze_max_age', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum_multixact_freeze_max_age"
+    ]
+  },
+  "role_210": {
+    "description": "PostgreSQL-specific knob 'autovacuum_work_mem', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum_work_mem"
+    ]
+  },
+  "role_211": {
+    "description": "PostgreSQL-specific knob 'geqo_seed', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "geqo_seed"
+    ]
+  },
+  "role_212": {
+    "description": "PostgreSQL-specific knob 'checkpoint_completion_target', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "checkpoint_completion_target"
+    ]
+  },
+  "role_213": {
+    "description": "PostgreSQL-specific knob 'cpu_index_tuple_cost', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "cpu_index_tuple_cost"
+    ]
+  },
+  "role_214": {
+    "description": "PostgreSQL-specific knob 'autovacuum_vacuum_insert_scale_factor', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum_vacuum_insert_scale_factor"
+    ]
+  },
+  "role_215": {
+    "description": "PostgreSQL-specific knob 'enable_partitionwise_aggregate', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_partitionwise_aggregate"
+    ]
+  },
+  "role_216": {
+    "description": "PostgreSQL-specific knob 'enable_partitionwise_join', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_partitionwise_join"
+    ]
+  },
+  "role_217": {
+    "description": "PostgreSQL-specific knob 'from_collapse_limit', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "from_collapse_limit"
+    ]
+  },
+  "role_218": {
+    "description": "PostgreSQL-specific knob 'min_parallel_table_scan_size', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "min_parallel_table_scan_size"
+    ]
+  },
+  "role_219": {
+    "description": "PostgreSQL-specific knob 'enable_tidscan', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_tidscan"
+    ]
+  },
+  "role_220": {
+    "description": "PostgreSQL-specific knob 'max_pred_locks_per_relation', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "max_pred_locks_per_relation"
+    ]
+  },
+  "role_221": {
+    "description": "PostgreSQL-specific knob 'autovacuum_vacuum_insert_threshold', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "autovacuum_vacuum_insert_threshold"
+    ]
+  },
+  "role_222": {
+    "description": "PostgreSQL-specific knob 'geqo_effort', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "geqo_effort"
+    ]
+  },
+  "role_223": {
+    "description": "PostgreSQL-specific knob 'wal_compression', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "wal_compression"
+    ]
+  },
+  "role_224": {
+    "description": "PostgreSQL-specific knob 'geqo_generations', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "geqo_generations"
+    ]
+  },
+  "role_225": {
+    "description": "PostgreSQL-specific knob 'max_wal_size', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "max_wal_size"
+    ]
+  },
+  "role_226": {
+    "description": "PostgreSQL-specific knob 'enable_seqscan', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "enable_seqscan"
+    ]
+  },
+  "role_227": {
+    "description": "PostgreSQL-specific knob 'geqo', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "geqo"
+    ]
+  },
+  "role_228": {
+    "description": "PostgreSQL-specific knob 'geqo_pool_size', no MySQL match defined in expert mapping.",
+    "MySQL": null,
+    "PostgreSQL": [
+      "geqo_pool_size"
+    ]
+  }
+}

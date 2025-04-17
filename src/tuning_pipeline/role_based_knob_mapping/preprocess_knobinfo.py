@@ -4,8 +4,8 @@ from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import StandardScaler
 
 # 수집한 knob info 데이터 불러오기
-mysql_df = pd.read_csv("../../../data/knob_info/mysql_all_knobs.csv")[["knob_name", "type", "description"]]
-postgresql_df = pd.read_csv("../../../data/knob_info/postgresql_all_knobs.csv")[["knob_name", "type", "description"]]
+mysql_df = pd.read_csv("../../../data/knowledge/role_based_mapping/mysql_all_knobs.csv")[["knob_name", "type", "description"]]
+postgresql_df = pd.read_csv("../../../data/knowledge/role_based_mapping/postgresql_all_knobs.csv")[["knob_name", "type", "description"]]
 
 mysql_df["DBMS"] = "MySQL"
 postgresql_df["DBMS"] = "PostgreSQL"

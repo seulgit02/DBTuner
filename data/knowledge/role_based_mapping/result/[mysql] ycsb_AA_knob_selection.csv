@@ -1,0 +1,4 @@
+mysql_knob,role,postgresql_knobs
+innodb_rollback_on_timeout,role_049,['deadlock_timeout']
+expire_logs_days,role_051,['archive_timeout']
+read_buffer_size,role_053,['seq_page_cost']
