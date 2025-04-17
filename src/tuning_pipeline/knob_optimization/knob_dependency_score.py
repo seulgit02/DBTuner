@@ -39,6 +39,8 @@ if __name__ == "__main__":
     exam = pd.read_csv("example.csv")
     print(exam)
 
+
+    result = pd.DataFrame()
     for idx, data in exam.iterrows():
         A_prev = data['A_prev']
         A_curr = data['A_curr']
@@ -54,11 +56,16 @@ if __name__ == "__main__":
         inverse_score = iscorer.dependency_score_func(A_prev, A_curr, B_prev, B_curr)
 
         # Threshold Relation
-        tscorer = DependencyScore("threshold", T=0.5, theta=-0.2, gamma=100)
+        tscorer = DependencyScore("threshold", T=0.7, theta=-0.2, gamma=100)
         threshold_score = tscorer.dependency_score_func(A_prev, A_curr, B_prev, B_curr)
+        data = data.copy()
+        data['positive'] = positive_score
+        data['inverse'] = inverse_score
+        data['threshold'] = threshold_score
 
-        print("[relation type] ", data['relation_type'])
-        print(f"positive_func = {positive_score}")
-        print(f"inverse_func = {inverse_score}")
-        print(f"threshold_func = {threshold_score}")
-        print("\n------------------------------------------------\n")
+        result = result._append(data, ignore_index = True)
+
+result.to_csv("score_result")
+
+
+
