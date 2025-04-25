@@ -1,6 +1,7 @@
 .idea/
 *.iml
 data/workloads/*
+data/models/*
 data/knob_info/*
 data/knowledge/role_based_mapping/result/*
 !data/workloads/.gitkeep
