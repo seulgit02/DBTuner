@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
         result = result._append(data, ignore_index = True)
 
-result.to_csv("score_result")
+    result.to_csv("score_result")
 
 
 

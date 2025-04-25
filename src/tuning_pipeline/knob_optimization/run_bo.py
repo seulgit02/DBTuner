@@ -28,8 +28,8 @@ from LLM_expert import query_openai, parse_llm_response, build_dependency_prompt
 
 # --- 명령줄인자 ---
 parser = argparse.ArgumentParser()
-parser.add_argument("logfile", type=str, required=True)
-parser.add_argument("workload", type=str, required=True)
+parser.add_argument("--logfile", type=str, required=True)
+parser.add_argument("--workload", type=str, required=True)
 args = parser.parse_args()
 
 # --- 로깅 설정 ---
@@ -38,8 +38,8 @@ logger = logging.getLogger('BO_Logger')
 logger.setLevel(logging.INFO) # 로그 레벨 설정
 
 # 파일 핸들러 설정 (실시간 기록)
-log_file_path = f'../../../data/bo_result/{args.logflile}'
-file_handler = logging.FileHandler(log_file_path, mode='a') # 'a' 모드로 이어쓰기
+log_file_path = f'../../../data/bo_result/{args.logfile}.log'
+file_handler = logging.FileHandler(log_file_path, mode='a', encoding = 'utf-8') # 'a' 모드로 이어쓰기
 file_handler.setFormatter(log_formatter)
 # 파일 핸들러 추가 시 즉시 파일에 쓰도록 설정 (버퍼링 최소화)
 # Python 3.7+ 에서는 FileHandler가 기본적으로 버퍼링하지 않음, 명시적 flush 불필요
@@ -60,8 +60,8 @@ RANDOM_STATE = 42
 torch.manual_seed(RANDOM_STATE)
 
 # --- 목적 함수 관련 설정 ---
-TARGET_METRIC_INDEX = 0 # 0: tps, 1: latency
-TARGET_METRIC_NAME = 'tps'
+TPS_METRIC_INDEX = 0 # 0: tps, 1: latency
+LTC_METRIC_INDEX = 1
 IS_MAXIMIZATION = True
 
 '''
@@ -115,8 +115,11 @@ def prepare_initial_data(df: pd.DataFrame, knob_names: list, x_scaler: MinMaxSca
         logger.info("✅ 데이터 스케일링 완료 ([0, 1] 범위)")
         logger.info(f"✅ scaled_X_all: {scaled_X_all}")
         logger.info(f"✅ scaled_Y_all: {scaled_Y_all}")
+
+        epsilon = 1e-9
+        scaled_scores = scaled_Y_all[:, 0]/(scaled_Y_all[:, 1]+epsilon)  #shape: (N, )
         train_X = torch.tensor(scaled_X_all, device=DEVICE, dtype=DTYPE)
-        train_Y = torch.tensor(scaled_Y_all[:, TARGET_METRIC_INDEX], device=DEVICE, dtype=DTYPE).unsqueeze(-1)
+        train_Y = torch.tensor(scaled_scores, device=DEVICE, dtype=DTYPE).unsqueeze(-1)
         logger.info(f"초기 학습 텐서 생성 완료: train_X={train_X.shape}, train_Y={train_Y.shape}")
         logger.info("--- 초기 데이터 준비 완료 ---\n")
         return train_X, train_Y, X_all, Y_all # 원본 배열도 반환
@@ -253,22 +256,22 @@ def get_fitted_model(train_X: torch.Tensor, train_Y: torch.Tensor) -> SingleTask
     except Exception as e: logger.info(f"❌ 오류: GP 모델 학습 중 문제 - {e}"); raise e
 
 # --- 초기 최고점 탐색 함수 (스케일링된 값 기준) ---
-def find_best_initial_point_scaled(scaled_Y_all: np.ndarray) -> Tuple[float, int]:
+def find_best_initial_point_scaled(scaled_score_Y_all_np: np.ndarray) -> Tuple[float, int]:
     """초기 데이터셋에서 최고 성능 지점의 인덱스와 스케일링된 Y값 찾기"""
-    target_y_scaled = scaled_Y_all[:, TARGET_METRIC_INDEX]
+    target_y_scaled = scaled_score_Y_all_np
     # 비교용 값 (최소화 문제 시 부호 반전)
     y_for_comparison = target_y_scaled if IS_MAXIMIZATION else -target_y_scaled
 
     best_idx = y_for_comparison.argmax()
     best_y_scaled = target_y_scaled[best_idx] # 실제 스케일링된 목표값
 
-    logger.info(f"INFO: 초기 데이터 최고 성능 ({TARGET_METRIC_NAME}, 스케일링 값): {best_y_scaled:.4f} at index {best_idx}")
+    logger.info(f"INFO: 초기 데이터 최고 성능 (TPS/Latency, 스케일링 값): {best_y_scaled:.4f} at index {best_idx}")
     return best_y_scaled, best_idx # 스케일링된 최고 Y값과 해당 인덱스 반환
 
 # --- 초기 랜덤 지점 선택 함수 (스케일링된 값 기준) ---
-def select_random_initial_point_scaled(scaled_Y_all: np.ndarray) -> Tuple[float, int]:
+def select_random_initial_point_scaled(scaled_score_Y_all_np: np.ndarray) -> Tuple[float, int]:
     """초기 데이터셋에서 랜덤 지점의 인덱스와 스케일링된 목표 Y값을 선택합니다."""
-    num_initial_points = scaled_Y_all.shape[0]
+    num_initial_points = scaled_score_Y_all_np.shape[0]
     if num_initial_points == 0:
         raise ValueError("초기 데이터셋이 비어 있습니다.")
 
@@ -276,10 +279,12 @@ def select_random_initial_point_scaled(scaled_Y_all: np.ndarray) -> Tuple[float,
     random_idx = np.random.randint(0, num_initial_points)
 
     # 선택된 인덱스에 해당하는 스케일링된 목표 Y 값
-    selected_y_scaled = scaled_Y_all[random_idx, TARGET_METRIC_INDEX]
+    selected_y_score_scaled = scaled_score_Y_all_np[random_idx]
+    print(f"selected_y_score_scaled: {selected_y_score_scaled}")
+    print(f"selected_y_score_scaled.shape: {selected_y_score_scaled.shape}")
 
-    logger.info(f"INFO: 초기 지점으로 랜덤 선택 ({TARGET_METRIC_NAME}, 스케일링 값): {selected_y_scaled:.4f} at index {random_idx}")
-    return selected_y_scaled, random_idx # 선택된 스케일링된 Y값과 해당 인덱스 반환
+    logger.info(f"INFO: 초기 지점으로 랜덤 선택 (TPS/Latency, 스케일링 값): {selected_y_score_scaled} at index {random_idx}")
+    return selected_y_score_scaled, random_idx # 선택된 스케일링된 Y값과 해당 인덱스 반환
 
 
 # =============================================================================
@@ -293,12 +298,10 @@ if __name__ == "__main__":
     MODEL_SAVE_DIR = os.path.join(BASE_DIR, "models/xgboost_mysql")
     BASE_FILENAME = args.workload
 
-    MODEL_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_model.joblib")
-    X_SCALER_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_X_scaler.joblib")
-    Y_SCALER_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_y_scaler.joblib")
-    KNOB_NAMES_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_knob_names.joblib")
-
-
+    MODEL_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}._model.pkl")
+    X_SCALER_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}._x_scaler.pkl")
+    Y_SCALER_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}._y_scaler.pkl")
+    KNOB_NAMES_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}._knobs.pkl")
     # 1. 데이터 및 구성 요소 로드
     df, xgb_model, x_scaler, y_scaler, knob_names = load_data_and_components(
         CSV_FILE_PATH, MODEL_PATH, X_SCALER_PATH, Y_SCALER_PATH, KNOB_NAMES_PATH
@@ -306,11 +309,17 @@ if __name__ == "__main__":
     DIM = len(knob_names)
     bounds = torch.tensor([[0.0] * DIM, [1.0] * DIM], device=DEVICE, dtype=DTYPE)
 
-    # 2. 초기 데이터 준비 ([0, 1] 스케일 텐서 및 원본 배열)
+    # 2. 초기 데이터 준비 ([0, 1] 스케일 텐서 및 원본 배열), train_Y = scaled_score(TPS/Latency)
     train_X, train_Y, X_all_orig, Y_all_orig = prepare_initial_data(
         df, knob_names, x_scaler, y_scaler
     )
     scaled_Y_all_np = y_scaler.transform(Y_all_orig) # 역변환 위해 원본 Y도 스케일링
+    print(f"scaled_Y_all_np: {scaled_Y_all_np.shape}")
+    epsilon = 1e-9
+    scaled_score_Y_all_np = (
+        scaled_Y_all_np[:, 0] / scaled_Y_all_np[:, 1] + epsilon #(1000,)
+    )
+    print(f"scaled_score_Y_all_np: {scaled_score_Y_all_np.shape}")
 
     # 3. 초기 상태 및 최고 성능 추적 변수 초기화
     # <<< 수정 시작: 상태 변수를 스케일링된 값으로 저장 >>>
@@ -320,7 +329,7 @@ if __name__ == "__main__":
     current_dependency_weight: float = INITIAL_DEPENDENCY_WEIGHT
 
     # 최고 성능 추적 (스케일링된 값 기준), 처음 시작점은 랜덤으로 설정
-    best_y_scaled, best_idx_init = select_random_initial_point_scaled(scaled_Y_all_np)
+    best_y_scaled, best_idx_init = select_random_initial_point_scaled(scaled_score_Y_all_np)
     #best_y_scaled, best_idx_init = find_best_initial_point_scaled(scaled_Y_all_np)
     best_x_scaled_tensor = train_X[best_idx_init].unsqueeze(0)
 
@@ -373,8 +382,9 @@ if __name__ == "__main__":
             history_best_y_scaled.append(best_y_scaled)
             continue
 
-        new_objective_value_scaled: float = curr_perf_dict_scaled[f'scaled_{TARGET_METRIC_NAME}']
-        logger.info(f"  - 예측된 성능 ({TARGET_METRIC_NAME}, 스케일링 값): {new_objective_value_scaled:.4f}")
+        epsilon = 1e-9
+        new_objective_value_scaled: float = curr_perf_dict_scaled['scaled_tps'] / (curr_perf_dict_scaled['scaled_latency']+epsilon)
+        logger.info(f"  - 예측된 성능 (TPS/Latency, 스케일링 값): {new_objective_value_scaled:.4f}")
 
         # 의존성 가중치 계산
         curr_config_scaled_dict = {knob_names[i]: scaled_candidate_np[0, i] for i in range(DIM)}
@@ -393,22 +403,25 @@ if __name__ == "__main__":
         train_X = torch.cat([train_X, candidate_normalized], dim=0)
         train_Y = torch.cat([train_Y, new_objective_value_scaled_tensor], dim=0)
         logger.info(f"INFO: GP 학습 데이터 업데이트 완료. 현재 데이터 수: {train_X.shape[0]}")
+        logger.info(f"INFO: GP 학습 데이터 업데이트 완료. 현재 데이터 수: {train_X.shape[0]}")
 
         # --- 최고 성능 업데이트 (스케일링된 값 기준) ---
+        print(f"best_y_scaled: {best_y_scaled}")
         objective_value_for_comparison = new_objective_value_scaled if IS_MAXIMIZATION else -new_objective_value_scaled
         best_y_scaled_comparison = best_y_scaled if IS_MAXIMIZATION else -best_y_scaled
 
-        logger.info("objective_value_for_comparison: ", objective_value_for_comparison)
-        logger.info("best_y_scaled_comparison: ", best_y_scaled_comparison)
-
+        logger.info(f"objective_value_for_comparison: {objective_value_for_comparison}")
+        logger.info(f"best_y_scaled_comparison: {best_y_scaled_comparison}")
+        print(f"objective_value_for_comparison: {objective_value_for_comparison}")
+        print(f"best_y_scaled_comparison: {best_y_scaled_comparison}")
         if objective_value_for_comparison > best_y_scaled_comparison:
             best_y_scaled = new_objective_value_scaled
             best_x_scaled_tensor = candidate_normalized
             logger.info(f" M_")
-            logger.info(f"| ✨ 새로운 최고 성능 발견! ({TARGET_METRIC_NAME}, 스케일링 값: {best_y_scaled:.4f}) ✨ |")
+            logger.info(f"| ✨ 새로운 최고 성능 발견! (TPS/Latency, 스케일링 값: {best_y_scaled:.4f}) ✨ |")
             logger.info(f" L_")
         else:
-            logger.info(f"INFO: 최고 성능 유지 ({TARGET_METRIC_NAME}, 스케일링 값: {best_y_scaled:.4f})")
+            logger.info(f"INFO: 최고 성능 유지 (TPS/Latency, 스케일링 값: {best_y_scaled:.4f})")
 
         prev_config_scaled = curr_config_scaled_dict
         prev_perf_scaled = curr_perf_dict_scaled
@@ -433,7 +446,7 @@ if __name__ == "__main__":
              final_tps_unscaled = final_perf_unscaled[0, 0]; final_latency_unscaled = final_perf_unscaled[0, 1]
         else:
              logger.info("WARN: 최종 성능 예측 실패. 저장된 목표값만 역변환 시도.")
-             temp_y_scaled = np.zeros((1, 2)); temp_y_scaled[0, TARGET_METRIC_INDEX] = best_y_scaled
+             temp_y_scaled = np.zeros((1, 2))
              final_perf_unscaled = y_scaler.inverse_transform(temp_y_scaled)
              final_tps_unscaled = final_perf_unscaled[0, 0] if TARGET_METRIC_INDEX == 0 else np.nan
              final_latency_unscaled = final_perf_unscaled[0, 1] if TARGET_METRIC_INDEX == 1 else np.nan
@@ -444,7 +457,6 @@ if __name__ == "__main__":
         logger.info(f"  - Knobs: {{{config_str}}}")
         logger.info(f"  - 성능 (TPS): {final_tps_unscaled:.4f}")
         logger.info(f"  - 성능 (Latency): {final_latency_unscaled:.4f}")
-        final_target_metric_value = final_tps_unscaled if TARGET_METRIC_NAME == 'tps' else final_latency_unscaled
-        logger.info(f"  - 목표 성능 ({TARGET_METRIC_NAME}): {final_target_metric_value:.4f}")
+        final_target_metric_value = final_tps_unscaled/final_latency_unscaled
     else:
         logger.info("❌ 최적 설정을 찾지 못했습니다.")
