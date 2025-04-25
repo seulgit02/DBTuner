@@ -7,18 +7,7 @@ import ast
 import joblib
 from typing import Dict, Any, Optional, Tuple
 import logging
-# --- 로깅 설정 ---
-log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
-logger = logging.getLogger('BO_Logger')
-logger.setLevel(logging.INFO) # 로그 레벨 설정
-
-# 파일 핸들러 설정 (실시간 기록)
-log_file_path = 'bo_log_ycsb_BB.log'
-file_handler = logging.FileHandler(log_file_path, mode='a') # 'a' 모드로 이어쓰기
-file_handler.setFormatter(log_formatter)
-# 파일 핸들러 추가 시 즉시 파일에 쓰도록 설정 (버퍼링 최소화)
-# Python 3.7+ 에서는 FileHandler가 기본적으로 버퍼링하지 않음, 명시적 flush 불필요
-logger.addHandler(file_handler)
+import argparse
 
 # BoTorch
 from botorch.models.model import Model
@@ -33,8 +22,28 @@ import warnings
 # Scikit-learn
 from sklearn.preprocessing import MinMaxScaler
 
-scorer = DependencyScore("positive", alpha=100)
+# 사용자 정의 모듈
+from knob_dependency_score import DependencyScore
+from LLM_expert import query_openai, parse_llm_response, build_dependency_prompt
 
+# --- 명령줄인자 ---
+parser = argparse.ArgumentParser()
+parser.add_argument("logfile", type=str, required=True)
+parser.add_argument("workload", type=str, required=True)
+args = parser.parse_args()
+
+# --- 로깅 설정 ---
+log_formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+logger = logging.getLogger('BO_Logger')
+logger.setLevel(logging.INFO) # 로그 레벨 설정
+
+# 파일 핸들러 설정 (실시간 기록)
+log_file_path = f'../../../data/bo_result/{args.logflile}'
+file_handler = logging.FileHandler(log_file_path, mode='a') # 'a' 모드로 이어쓰기
+file_handler.setFormatter(log_formatter)
+# 파일 핸들러 추가 시 즉시 파일에 쓰도록 설정 (버퍼링 최소화)
+# Python 3.7+ 에서는 FileHandler가 기본적으로 버퍼링하지 않음, 명시적 flush 불필요
+logger.addHandler(file_handler)
 
 warnings.filterwarnings("ignore", category=BadInitialCandidatesWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
@@ -42,16 +51,6 @@ warnings.filterwarnings("ignore", category=RuntimeWarning)
 # --- 초기 설정 및 경로 ---
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DTYPE = torch.double
-
-BASE_DIR = "./drive/MyDrive/DBTune"
-CSV_FILE_PATH = os.path.join(BASE_DIR, "workloads/mysql/original_data/preprocess/knob_filter/MYSQL_YCSB_BB_FILTERED.csv")
-MODEL_SAVE_DIR = os.path.join(BASE_DIR, "models/xgboost_mysql")
-BASE_FILENAME = "MYSQL_YCSB_BB_FILTERED"
-
-MODEL_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_model.joblib")
-X_SCALER_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_X_scaler.joblib")
-Y_SCALER_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_y_scaler.joblib")
-KNOB_NAMES_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_knob_names.joblib")
 
 # --- BO 설정 ---
 PERFORMANCE_THRESHOLD = 1.2 # 성능 20프로 이상 향상
@@ -288,6 +287,18 @@ def select_random_initial_point_scaled(scaled_Y_all: np.ndarray) -> Tuple[float,
 # =============================================================================
 
 if __name__ == "__main__":
+
+    BASE_DIR = "../../../data"
+    CSV_FILE_PATH = os.path.join(BASE_DIR, f"workloads/mysql/original_data/preprocess/knob_filter/{args.workload}.csv") # MYSQL_YCSB_{AA/BB/EE/FF}_ORIGIN
+    MODEL_SAVE_DIR = os.path.join(BASE_DIR, "models/xgboost_mysql")
+    BASE_FILENAME = args.workload
+
+    MODEL_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_model.joblib")
+    X_SCALER_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_X_scaler.joblib")
+    Y_SCALER_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_y_scaler.joblib")
+    KNOB_NAMES_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}_knob_names.joblib")
+
+
     # 1. 데이터 및 구성 요소 로드
     df, xgb_model, x_scaler, y_scaler, knob_names = load_data_and_components(
         CSV_FILE_PATH, MODEL_PATH, X_SCALER_PATH, Y_SCALER_PATH, KNOB_NAMES_PATH

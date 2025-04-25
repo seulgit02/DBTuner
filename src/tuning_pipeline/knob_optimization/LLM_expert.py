@@ -1,16 +1,12 @@
 import openai
-import osimport
-
-openai
 import os
 import re
 import ast
 from dotenv import load_dotenv  # pip install python-dotenv
 from typing import Dict, Any, Optional, Tuple
-import json
 
 load_dotenv()
-api_key = os.getenv("API_KEY")
+api_key = os.getenv("OPENAI_API_KEY")
 # 쿼리 호출 함수
 openai.api_key = api_key
 
@@ -134,23 +130,3 @@ if __name__ == "__main__":
 
     print(parse_llm_response(result))
 
-cy
-": 0.38
-}
-
-curr_perf = {
-"tps": 0.67,
-"latency": 0.25
-}
-
-# 프롬프트 생성
-prompt = build_dependency_prompt(prev_conf, prev_perf, curr_conf, curr_perf)
-
-# OpenAI 쿼리
-result = query_openai(prompt)
-
-# 결과 출력
-print("===== LLM Output =====")
-print(result)
-
-print(parse_llm_response(result))
