@@ -30,6 +30,10 @@ from LLM_expert import query_openai, parse_llm_response, build_dependency_prompt
 parser = argparse.ArgumentParser()
 parser.add_argument("--logfile", type=str, required=True)
 parser.add_argument("--workload", type=str, required=True)
+# dependency score parameter(민감도 파라미터, 값이 작을수록 완만해지는 그래프, 더 민감한 차이도 잘 반영함)
+parser.add_argument("--alpha", type=float, required=True)
+parser.add_argument("--beta", type=float, required=True)
+parser.add_argument("--gamma", type=float, required=True)
 args = parser.parse_args()
 
 # --- 로깅 설정 ---
@@ -53,7 +57,7 @@ DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DTYPE = torch.double
 
 # --- BO 설정 ---
-PERFORMANCE_THRESHOLD = 1.2 # 성능 20프로 이상 향상
+PERFORMANCE_THRESHOLD = 1.1 # 성능 10프로 이상 향상(1.1~1.3)
 INITIAL_DEPENDENCY_WEIGHT = 1.0
 N_ITERATIONS = 300
 RANDOM_STATE = 42
@@ -180,7 +184,7 @@ def calculate_dependency_weight(
     curr_metric = curr_tps_scaled / (curr_latency_scaled + 1e-9)
 
     # 스케일링된 값 기준의 성능 향상 임계값 비교
-    perf_improvement = curr_metric/prev_metric
+    perf_improvement = curr_metric / prev_metric
     logger.info(f"🍁 성능 향상값: {perf_improvement}")
     if perf_improvement >= PERFORMANCE_THRESHOLD: # PERFORMANCE_THRESHOLD 값의 의미가 달라짐
         logger.info("🔥 INFO: 유의미한 성능 향상 감지 (스케일링 값 기준), LLM 호출...")
@@ -196,8 +200,8 @@ def calculate_dependency_weight(
                 # !!! 중요 !!!: DependencyScore 클래스가 스케일링된 값을 처리할 수 있어야 함
                 A_prev_scaled, A_curr_scaled = prev_config_scaled[knob1_name], curr_config_scaled[knob1_name]
                 B_prev_scaled, B_curr_scaled = prev_config_scaled[knob2_name], curr_config_scaled[knob2_name]
-                if relation_type == "positive": weight = 1+DependencyScore("positive", alpha=100).dependency_score_func(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled)
-                else: weight = 1+DependencyScore("inverse", beta=100).dependency_score_func(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled)
+                if relation_type == "positive": weight = 1+DependencyScore("positive", alpha={args.alpha}).dependency_score_func(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled)
+                else: weight = 1+DependencyScore("inverse", beta={args.beta}).dependency_score_func(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled)
             # THRESHOLD
             elif relation_type == "threshold" and knob_names_from_llm and len(knob_names_from_llm) >= 1:
                  threshold_knob_name = knob_names_from_llm[0]
@@ -280,8 +284,8 @@ def select_random_initial_point_scaled(scaled_score_Y_all_np: np.ndarray) -> Tup
 
     # 선택된 인덱스에 해당하는 스케일링된 목표 Y 값
     selected_y_score_scaled = scaled_score_Y_all_np[random_idx]
-    print(f"selected_y_score_scaled: {selected_y_score_scaled}")
-    print(f"selected_y_score_scaled.shape: {selected_y_score_scaled.shape}")
+    # print(f"selected_y_score_scaled: {selected_y_score_scaled}")
+    # print(f"selected_y_score_scaled.shape: {selected_y_score_scaled.shape}")
 
     logger.info(f"INFO: 초기 지점으로 랜덤 선택 (TPS/Latency, 스케일링 값): {selected_y_score_scaled} at index {random_idx}")
     return selected_y_score_scaled, random_idx # 선택된 스케일링된 Y값과 해당 인덱스 반환
@@ -295,7 +299,7 @@ if __name__ == "__main__":
 
     BASE_DIR = "../../../data"
     CSV_FILE_PATH = os.path.join(BASE_DIR, f"workloads/mysql/original_data/preprocess/knob_filter/{args.workload}.csv") # MYSQL_YCSB_{AA/BB/EE/FF}_ORIGIN
-    MODEL_SAVE_DIR = os.path.join(BASE_DIR, "models/xgboost_mysql")
+    MODEL_SAVE_DIR = os.path.join(BASE_DIR, "models/xgboost_mysql/scale")
     BASE_FILENAME = args.workload
 
     MODEL_PATH = os.path.join(MODEL_SAVE_DIR, f"{BASE_FILENAME}._model.pkl")
@@ -314,12 +318,12 @@ if __name__ == "__main__":
         df, knob_names, x_scaler, y_scaler
     )
     scaled_Y_all_np = y_scaler.transform(Y_all_orig) # 역변환 위해 원본 Y도 스케일링
-    print(f"scaled_Y_all_np: {scaled_Y_all_np.shape}")
+    # print(f"scaled_Y_all_np: {scaled_Y_all_np.shape}")
     epsilon = 1e-9
     scaled_score_Y_all_np = (
         scaled_Y_all_np[:, 0] / scaled_Y_all_np[:, 1] + epsilon #(1000,)
     )
-    print(f"scaled_score_Y_all_np: {scaled_score_Y_all_np.shape}")
+    # print(f"scaled_score_Y_all_np: {scaled_score_Y_all_np.shape}")
 
     # 3. 초기 상태 및 최고 성능 추적 변수 초기화
     # <<< 수정 시작: 상태 변수를 스케일링된 값으로 저장 >>>
@@ -406,14 +410,14 @@ if __name__ == "__main__":
         logger.info(f"INFO: GP 학습 데이터 업데이트 완료. 현재 데이터 수: {train_X.shape[0]}")
 
         # --- 최고 성능 업데이트 (스케일링된 값 기준) ---
-        print(f"best_y_scaled: {best_y_scaled}")
+        # print(f"best_y_scaled: {best_y_scaled}")
         objective_value_for_comparison = new_objective_value_scaled if IS_MAXIMIZATION else -new_objective_value_scaled
         best_y_scaled_comparison = best_y_scaled if IS_MAXIMIZATION else -best_y_scaled
 
-        logger.info(f"objective_value_for_comparison: {objective_value_for_comparison}")
-        logger.info(f"best_y_scaled_comparison: {best_y_scaled_comparison}")
-        print(f"objective_value_for_comparison: {objective_value_for_comparison}")
-        print(f"best_y_scaled_comparison: {best_y_scaled_comparison}")
+        # logger.info(f"objective_value_for_comparison: {objective_value_for_comparison}")
+        # logger.info(f"best_y_scaled_comparison: {best_y_scaled_comparison}")
+        # print(f"objective_value_for_comparison: {objective_value_for_comparison}")
+        # print(f"best_y_scaled_comparison: {best_y_scaled_comparison}")
         if objective_value_for_comparison > best_y_scaled_comparison:
             best_y_scaled = new_objective_value_scaled
             best_x_scaled_tensor = candidate_normalized

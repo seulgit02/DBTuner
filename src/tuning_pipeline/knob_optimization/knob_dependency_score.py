@@ -1,30 +1,45 @@
 import numpy as np
 import pandas as pd
 
+# knob_dependency_score.py (DependencyScore 클래스 내부 수정 예시)
 class DependencyScore:
     def __init__(self, relation_type, **params):
         self.relation_type = relation_type
         self.params = params
+
     def dependency_score_func(self, A_prev, A_curr, B_prev, B_curr):
+        # 입력값이 스케일링된 값(0~1)임을 가정
         delta_A = A_curr - A_prev
         delta_B = B_curr - B_prev
 
         if self.relation_type == "positive":
-            alpha = self.params.get("alpha", 50)
-            return np.exp(-alpha * (delta_A-delta_B)**2)
+            # alpha 기본값을 50 대신 더 작은 값(예: 10)으로 변경
+            alpha = self.params.get("alpha", 10) # <--- 기본값 수정
+            score = np.exp(-alpha * (delta_A - delta_B)**2)
+            # 값의 범위를 명시적으로 [0, 1]로 제한 (혹시 모를 부동소수점 오류 대비)
+            return np.clip(score, 0.0, 1.0)
 
         elif self.relation_type == "inverse":
-            beta = self.params.get("beta", 50)
-            return np.exp(-beta * (delta_A+delta_B)**2)
+            # beta 기본값을 50 대신 더 작은 값(예: 10)으로 변경
+            beta = self.params.get("beta", 10) # <--- 기본값 수정
+            score = np.exp(-beta * (delta_A + delta_B)**2)
+            return np.clip(score, 0.0, 1.0)
 
         elif self.relation_type == "threshold":
             T = self.params["T"]
-            theta = self.params.get("theta", -0.1)
-            gamma = self.params.get("gamma", 100)
+            # theta 기본값도 필요시 조정 (예: 0)
+            theta = self.params.get("theta", 0.0) # <--- 기본값 수정 (예시)
+            # gamma 기본값도 필요시 조정 (예: 10)
+            gamma = self.params.get("gamma", 10) # <--- 기본값 수정 (예시)
 
             if A_curr > T:
-                return np.exp(-gamma * (delta_B - theta)**2)
+                # A가 임계값을 넘었을 때만 B의 변화를 평가
+                score = np.exp(-gamma * (delta_B - theta)**2)
+                return np.clip(score, 0.0, 1.0)
             else:
+                # A가 임계값을 넘지 않으면 이 의존성은 발현되지 않은 것으로 간주
+                # 중립적인 점수 1.0 반환 (이 의존성으로 인해 가중치를 낮추지 않음)
+                # 또는 상황에 따라 0.0 이나 다른 값을 반환할 수도 있음 (현재 로직 유지)
                 return 1.0
         else:
             raise ValueError(f"존재하지 않는 Relation Type입니다: {self.relation_type}")
