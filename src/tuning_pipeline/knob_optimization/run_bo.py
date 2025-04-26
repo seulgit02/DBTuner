@@ -34,6 +34,7 @@ parser.add_argument("--workload", type=str, required=True)
 parser.add_argument("--alpha", type=float, required=True)
 parser.add_argument("--beta", type=float, required=True)
 parser.add_argument("--gamma", type=float, required=True)
+parser.add_argument("--iter", type=int, required=True)
 args = parser.parse_args()
 
 # --- 로깅 설정 ---
@@ -59,7 +60,6 @@ DTYPE = torch.double
 # --- BO 설정 ---
 PERFORMANCE_THRESHOLD = 1.1 # 성능 10프로 이상 향상(1.1~1.3)
 INITIAL_DEPENDENCY_WEIGHT = 1.0
-N_ITERATIONS = 300
 RANDOM_STATE = 42
 torch.manual_seed(RANDOM_STATE)
 
@@ -67,6 +67,7 @@ torch.manual_seed(RANDOM_STATE)
 TPS_METRIC_INDEX = 0 # 0: tps, 1: latency
 LTC_METRIC_INDEX = 1
 IS_MAXIMIZATION = True
+N_ITERATIONS = {args.iter}
 
 '''
 # 함수 정의
