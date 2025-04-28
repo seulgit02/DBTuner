@@ -1,0 +1,12 @@
+{
+  "net_buffer_length": 1024,
+  "innodb_write_io_threads": 64,
+  "key_cache_age_threshold": 10000,
+  "innodb_max_dirty_pages_pct": 99.9900,
+  "table_open_cache": 1,
+  "read_rnd_buffer_size": 67108864,
+  "general_log": 0,
+  "innodb_buffer_pool_size": 1073741824,
+  "innodb_compression_failure_threshold_pct": 0,
+  "range_alloc_block_size": 4096
+}

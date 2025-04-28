@@ -8,6 +8,9 @@ import joblib
 from typing import Dict, Any, Optional, Tuple
 import logging
 import argparse
+from dotenv import load_dotenv  # pip install python-dotenv
+import openai
+from tabulate import tabulate # For table logging
 
 # BoTorch
 from botorch.models.model import Model
@@ -26,15 +29,28 @@ from sklearn.preprocessing import MinMaxScaler
 from knob_dependency_score import DependencyScore
 from LLM_expert import query_openai, parse_llm_response, build_dependency_prompt
 
+
+load_dotenv()
+api_key = os.getenv("OPENAI_API_KEY")
+assistant_id = os.getenv("OPENAI_ASSISTANT_ID")
+# 쿼리 호출 함수
+openai.api_key = api_key
+
+
 # --- 명령줄인자 ---
 parser = argparse.ArgumentParser()
+
+# logfile 이름
 parser.add_argument("--logfile", type=str, required=True)
+# worklaod 종류 이름
 parser.add_argument("--workload", type=str, required=True)
 # dependency score parameter(민감도 파라미터, 값이 작을수록 완만해지는 그래프, 더 민감한 차이도 잘 반영함)
 parser.add_argument("--alpha", type=float, required=True)
 parser.add_argument("--beta", type=float, required=True)
 parser.add_argument("--gamma", type=float, required=True)
+# bayesian optimization iteration 횟수
 parser.add_argument("--iter", type=int, required=True)
+
 args = parser.parse_args()
 
 # --- 로깅 설정 ---
@@ -53,6 +69,26 @@ logger.addHandler(file_handler)
 warnings.filterwarnings("ignore", category=BadInitialCandidatesWarning)
 warnings.filterwarnings("ignore", category=RuntimeWarning)
 
+# --- 3. Log Parsed Arguments as a Table (수정된 방식) ---
+logger.info("") # 로그 시작 전 빈 줄 추가 (선택 사항)
+logger.info("=" * 60)
+logger.info("🚀 Script Execution Started with Arguments:")
+logger.info("=" * 60)
+
+# Convert args namespace to dictionary
+args_dict = vars(args)
+
+# Create table string using tabulate
+args_table = tabulate(args_dict.items(), headers=["Argument", "Value"], tablefmt="grid")
+
+# <<< 핵심 수정: 테이블을 한 줄씩 로깅 >>>
+for line in args_table.splitlines():
+    logger.info(line)
+# <<< 수정 끝 >>>
+
+logger.info("-" * 60)
+logger.info("") # 로그 끝난 후 빈 줄 추가 (선택 사항)
+
 # --- 초기 설정 및 경로 ---
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 DTYPE = torch.double
@@ -67,7 +103,7 @@ torch.manual_seed(RANDOM_STATE)
 TPS_METRIC_INDEX = 0 # 0: tps, 1: latency
 LTC_METRIC_INDEX = 1
 IS_MAXIMIZATION = True
-N_ITERATIONS = {args.iter}
+N_ITERATIONS = args.iter
 
 '''
 # 함수 정의
@@ -186,29 +222,34 @@ def calculate_dependency_weight(
 
     # 스케일링된 값 기준의 성능 향상 임계값 비교
     perf_improvement = curr_metric / prev_metric
-    logger.info(f"🍁 성능 향상값: {perf_improvement}")
+    logger.info(f"📈 성능 향상값: {perf_improvement}")
     if perf_improvement >= PERFORMANCE_THRESHOLD: # PERFORMANCE_THRESHOLD 값의 의미가 달라짐
         logger.info("🔥 INFO: 유의미한 성능 향상 감지 (스케일링 값 기준), LLM 호출...")
         try:
             prompt = build_dependency_prompt(prev_config_scaled, prev_perf_scaled, curr_config_scaled, curr_perf_scaled)
             response = query_openai(prompt)
+            logger.info(f"💬LLM Resposne: {response}")
             parsed_data = parse_llm_response(response)
             relation_type = parsed_data.get("relation_type"); knob_names_from_llm = parsed_data.get("knob_names")
-            logger.info(f"💬LLM 결과: 관계='{relation_type}', Knobs='{knob_names_from_llm}'")
+            logger.info(f"📊LLM 결과: 관계='{relation_type}', Knobs='{knob_names_from_llm}'")
             # POSITIVE, INVERSE
             if relation_type in ["positive", "inverse"] and knob_names_from_llm and len(knob_names_from_llm) >= 2:
                 knob1_name, knob2_name = knob_names_from_llm[0], knob_names_from_llm[1]
-                # !!! 중요 !!!: DependencyScore 클래스가 스케일링된 값을 처리할 수 있어야 함
+
                 A_prev_scaled, A_curr_scaled = prev_config_scaled[knob1_name], curr_config_scaled[knob1_name]
                 B_prev_scaled, B_curr_scaled = prev_config_scaled[knob2_name], curr_config_scaled[knob2_name]
-                if relation_type == "positive": weight = 1+DependencyScore("positive", alpha={args.alpha}).dependency_score_func(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled)
-                else: weight = 1+DependencyScore("inverse", beta={args.beta}).dependency_score_func(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled)
+
+                if relation_type == "positive": weight = DependencyScore("positive", alpha=args.alpha).dependency_score_func_ver2(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled)
+                else: weight = DependencyScore("inverse", beta=args.beta).dependency_score_func_ver2(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled)
             # THRESHOLD
-            elif relation_type == "threshold" and knob_names_from_llm and len(knob_names_from_llm) >= 1:
-                 threshold_knob_name = knob_names_from_llm[0]
-                 A_curr_scaled = curr_config_scaled[threshold_knob_name]
-                 logger.info(" WARN: Threshold 의존성 점수 계산 잠시 보류. T값 반환을 위해 prompt 수정 필요")
-                 weight = INITIAL_DEPENDENCY_WEIGHT
+            elif relation_type == "threshold":
+                 threshold_knob_name, affected_knob_name = knob_names_from_llm[0], knob_names_from_llm[1]
+                 threshold_value = parsed_data.get("threshold_value")
+
+                 A_prev_scaled, A_curr_scaled = prev_config_scaled[threshold_knob_name], curr_config_scaled[threshold_knob_name]
+                 B_prev_scaled, B_curr_scaled = prev_config_scaled[affected_knob_name], curr_config_scaled[affected_knob_name]
+                 weight = DependencyScore("threshold", gamma=args.gamma).dependency_score_func_ver2(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled, threshold_value)
+
             # NOTHING
             elif relation_type == "nothing": print("⛔ INFO: LLM 분석 결과: 의존성 없음."); weight = INITIAL_DEPENDENCY_WEIGHT
             else: logger.info("WARN: LLM 응답에서 유효 정보 추출 실패."); weight = INITIAL_DEPENDENCY_WEIGHT
@@ -407,7 +448,6 @@ if __name__ == "__main__":
         )
         train_X = torch.cat([train_X, candidate_normalized], dim=0)
         train_Y = torch.cat([train_Y, new_objective_value_scaled_tensor], dim=0)
-        logger.info(f"INFO: GP 학습 데이터 업데이트 완료. 현재 데이터 수: {train_X.shape[0]}")
         logger.info(f"INFO: GP 학습 데이터 업데이트 완료. 현재 데이터 수: {train_X.shape[0]}")
 
         # --- 최고 성능 업데이트 (스케일링된 값 기준) ---
