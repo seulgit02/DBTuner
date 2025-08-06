@@ -16,7 +16,7 @@ from tabulate import tabulate # For table logging
 from botorch.models.model import Model
 from botorch.models import SingleTaskGP
 from botorch.fit import fit_gpytorch_mll
-from botorch.acquisition import UpperConfidenceBound, AcquisitionFunction
+from botorch.acquisition import UpperConfidenceBound, AcquisitionFunction, ExpectedImprovement
 from botorch.optim import optimize_acqf
 from gpytorch.mlls import ExactMarginalLogLikelihood
 from botorch.exceptions import BadInitialCandidatesWarning
@@ -25,9 +25,6 @@ import warnings
 # Scikit-learn
 from sklearn.preprocessing import MinMaxScaler
 
-# 사용자 정의 모듈
-from knob_dependency_score import DependencyScore
-from LLM_expert import query_openai, parse_llm_response, build_dependency_prompt
 
 
 load_dotenv()
@@ -44,10 +41,6 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--logfile", type=str, required=True)
 # worklaod 종류 이름
 parser.add_argument("--workload", type=str, required=True)
-# dependency score parameter(민감도 파라미터, 값이 작을수록 완만해지는 그래프, 더 민감한 차이도 잘 반영함)
-parser.add_argument("--alpha", type=float, required=True)
-parser.add_argument("--beta", type=float, required=True)
-parser.add_argument("--gamma", type=float, required=True)
 # bayesian optimization iteration 횟수
 parser.add_argument("--iter", type=int, required=True)
 
@@ -59,7 +52,7 @@ logger = logging.getLogger('BO_Logger')
 logger.setLevel(logging.INFO) # 로그 레벨 설정
 
 # 파일 핸들러 설정 (실시간 기록)
-log_file_path = f'../../../data/bo_result/{args.logfile}.log'
+log_file_path = f'../../../data/bo_result/ablation_study/{args.logfile}.log'
 file_handler = logging.FileHandler(log_file_path, mode='a', encoding = 'utf-8') # 'a' 모드로 이어쓰기
 file_handler.setFormatter(log_formatter)
 # 파일 핸들러 추가 시 즉시 파일에 쓰도록 설정 (버퍼링 최소화)
@@ -95,7 +88,6 @@ DTYPE = torch.double
 
 # --- BO 설정 ---
 PERFORMANCE_THRESHOLD = 1.1 # 성능 10프로 이상 향상(1.1~1.3)
-INITIAL_DEPENDENCY_WEIGHT = 1.0
 RANDOM_STATE = 42
 torch.manual_seed(RANDOM_STATE)
 
@@ -120,6 +112,9 @@ N_ITERATIONS = args.iter
         ￮
         ￮
 '''
+
+global tps_importance
+tps_importance = 2.0
 
 def load_data_and_components(csv_path: str, model_path: str, x_scaler_path: str, y_scaler_path: str, knob_names_path: str) \
         -> Tuple[pd.DataFrame, Any, MinMaxScaler, MinMaxScaler, list]:
@@ -158,7 +153,7 @@ def prepare_initial_data(df: pd.DataFrame, knob_names: list, x_scaler: MinMaxSca
         logger.info(f"✅ scaled_Y_all: {scaled_Y_all}")
 
         epsilon = 1e-9
-        scaled_scores = scaled_Y_all[:, 0]/(scaled_Y_all[:, 1]+epsilon)  #shape: (N, )
+        scaled_scores = ((scaled_Y_all[:, 0]*tps_importance)/(scaled_Y_all[:, 1]+epsilon))  #shape: (N, )
         train_X = torch.tensor(scaled_X_all, device=DEVICE, dtype=DTYPE)
         train_Y = torch.tensor(scaled_scores, device=DEVICE, dtype=DTYPE).unsqueeze(-1)
         logger.info(f"초기 학습 텐서 생성 완료: train_X={train_X.shape}, train_Y={train_Y.shape}")
@@ -193,83 +188,6 @@ def predict_performance_scaled(scaled_input_np: np.ndarray, xgb_model: Any) \
         logger.info(f"❌ 오류: XGBoost 예측 중 문제 발생 - {e}")
         return None
 
-# --- 의존성 가중치 계산 함수 ---
-# 입력: 원본 스케일 값들, 반환: 가중치 (float)
-def calculate_dependency_weight(
-    prev_config_scaled: Optional[Dict[str, float]],
-    prev_perf_scaled: Optional[Dict[str, float]],
-    curr_config_scaled: Dict[str, float],
-    curr_perf_scaled: Dict[str, float],
-    knob_names: list
-) -> float:
-
-    weight = INITIAL_DEPENDENCY_WEIGHT
-    if prev_perf_scaled is None or prev_config_scaled is None:
-        logger.info("INFO: 첫 반복, 기본 가중치 1.0 사용.")
-        return weight
-
-    # 성능 변화 계산 (스케일링된 값 기준)
-    # 키 이름이 'scaled_tps', 'scaled_latency' 임에 주의
-    prev_latency_scaled = prev_perf_scaled.get('scaled_latency', 0)
-    curr_latency_scaled = curr_perf_scaled.get('scaled_latency', 0)
-    prev_tps_scaled = prev_perf_scaled.get('scaled_tps', 0)
-    curr_tps_scaled = curr_perf_scaled.get('scaled_tps', 0)
-
-    # 스케일링된 값으로 성능 비율 계산 (이 비교 방식이 유효한지 확인 필요)
-    # 예를 들어, latency가 0에 가까워지면 비율이 불안정해질 수 있음
-    prev_metric = prev_tps_scaled / (prev_latency_scaled + 1e-9)
-    curr_metric = curr_tps_scaled / (curr_latency_scaled + 1e-9)
-
-    # 스케일링된 값 기준의 성능 향상 임계값 비교
-    perf_improvement = curr_metric / prev_metric
-    logger.info(f"📈 성능 향상값: {perf_improvement}")
-    if perf_improvement >= PERFORMANCE_THRESHOLD: # PERFORMANCE_THRESHOLD 값의 의미가 달라짐
-        logger.info("🔥 INFO: 유의미한 성능 향상 감지 (스케일링 값 기준), LLM 호출...")
-        try:
-            prompt = build_dependency_prompt(prev_config_scaled, prev_perf_scaled, curr_config_scaled, curr_perf_scaled)
-            response = query_openai(prompt)
-            logger.info(f"💬LLM Resposne: {response}")
-            parsed_data = parse_llm_response(response)
-            relation_type = parsed_data.get("relation_type"); knob_names_from_llm = parsed_data.get("knob_names")
-            logger.info(f"📊LLM 결과: 관계='{relation_type}', Knobs='{knob_names_from_llm}'")
-            # POSITIVE, INVERSE
-            if relation_type in ["positive", "inverse"] and knob_names_from_llm and len(knob_names_from_llm) >= 2:
-                knob1_name, knob2_name = knob_names_from_llm[0], knob_names_from_llm[1]
-
-                A_prev_scaled, A_curr_scaled = prev_config_scaled[knob1_name], curr_config_scaled[knob1_name]
-                B_prev_scaled, B_curr_scaled = prev_config_scaled[knob2_name], curr_config_scaled[knob2_name]
-
-                if relation_type == "positive": weight = DependencyScore("positive", alpha=args.alpha).dependency_score_func_ver2(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled)
-                else: weight = DependencyScore("inverse", beta=args.beta).dependency_score_func_ver2(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled)
-            # THRESHOLD
-            elif relation_type == "threshold":
-                 threshold_knob_name, affected_knob_name = knob_names_from_llm[0], knob_names_from_llm[1]
-                 threshold_value = parsed_data.get("threshold_value")
-
-                 A_prev_scaled, A_curr_scaled = prev_config_scaled[threshold_knob_name], curr_config_scaled[threshold_knob_name]
-                 B_prev_scaled, B_curr_scaled = prev_config_scaled[affected_knob_name], curr_config_scaled[affected_knob_name]
-                 weight = DependencyScore("threshold", gamma=args.gamma).dependency_score_func_ver2(A_prev_scaled, A_curr_scaled, B_prev_scaled, B_curr_scaled, threshold_value)
-
-            # NOTHING
-            elif relation_type == "nothing": print("⛔ INFO: LLM 분석 결과: 의존성 없음."); weight = INITIAL_DEPENDENCY_WEIGHT
-            else: logger.info("WARN: LLM 응답에서 유효 정보 추출 실패."); weight = INITIAL_DEPENDENCY_WEIGHT
-        except KeyError as e: logger.info(f"❌ 오류: LLM 반환 knob 이름 '{e}' 없음."); weight = INITIAL_DEPENDENCY_WEIGHT
-        except Exception as e: logger.info(f"❌ 오류: LLM/의존성 계산 중 문제 - {e}"); weight = INITIAL_DEPENDENCY_WEIGHT
-    else: logger.info("💀 INFO: 성능 변화 미미 (스케일링 값 기준), LLM 호출 건너뜀."); weight = INITIAL_DEPENDENCY_WEIGHT
-    weight = max(0.1, float(weight))
-    logger.info(f"INFO: 다음 반복 가중치: {weight:.4f}")
-    return weight
-
-
-# --- 커스텀 Acquisition 함수 ---
-class DependencyWeightedAcquisitionFunction(AcquisitionFunction):
-    """커스텀 Acquisition 함수"""
-    # 이전 답변 클래스 내용과 동일
-    def __init__(self, model: Model, base_acquisition_function: AcquisitionFunction, dependency_weight: float):
-        super().__init__(model=model); self.base_acqf = base_acquisition_function; self.dependency_weight = dependency_weight
-    def forward(self, X: torch.Tensor) -> torch.Tensor:
-        base_acqf_value = self.base_acqf(X); weight_tensor = torch.tensor(self.dependency_weight, device=X.device, dtype=X.dtype)
-        return base_acqf_value * weight_tensor
 
 # --- GP 모델 학습 함수 ---
 def get_fitted_model(train_X: torch.Tensor, train_Y: torch.Tensor) -> SingleTaskGP:
@@ -279,18 +197,6 @@ def get_fitted_model(train_X: torch.Tensor, train_Y: torch.Tensor) -> SingleTask
     try: fit_gpytorch_mll(mll); logger.info("INFO: GP 모델 학습 완료."); return model
     except Exception as e: logger.info(f"❌ 오류: GP 모델 학습 중 문제 - {e}"); raise e
 
-# --- 초기 최고점 탐색 함수 (스케일링된 값 기준) ---
-def find_best_initial_point_scaled(scaled_score_Y_all_np: np.ndarray) -> Tuple[float, int]:
-    """초기 데이터셋에서 최고 성능 지점의 인덱스와 스케일링된 Y값 찾기"""
-    target_y_scaled = scaled_score_Y_all_np
-    # 비교용 값 (최소화 문제 시 부호 반전)
-    y_for_comparison = target_y_scaled if IS_MAXIMIZATION else -target_y_scaled
-
-    best_idx = y_for_comparison.argmax()
-    best_y_scaled = target_y_scaled[best_idx] # 실제 스케일링된 목표값
-
-    logger.info(f"INFO: 초기 데이터 최고 성능 (TPS/Latency, 스케일링 값): {best_y_scaled:.4f} at index {best_idx}")
-    return best_y_scaled, best_idx # 스케일링된 최고 Y값과 해당 인덱스 반환
 
 # --- 초기 랜덤 지점 선택 함수 (스케일링된 값 기준) ---
 def select_random_initial_point_scaled(scaled_score_Y_all_np: np.ndarray) -> Tuple[float, int]:
@@ -341,7 +247,7 @@ if __name__ == "__main__":
     # print(f"scaled_Y_all_np: {scaled_Y_all_np.shape}")
     epsilon = 1e-9
     scaled_score_Y_all_np = (
-        (3*scaled_Y_all_np[:, 0]) / scaled_Y_all_np[:, 1] + epsilon #(1000,)
+        scaled_Y_all_np[:, 0] / scaled_Y_all_np[:, 1] + epsilon #(1000,)
     )
     # print(f"scaled_score_Y_all_np: {scaled_score_Y_all_np.shape}")
 
@@ -349,14 +255,11 @@ if __name__ == "__main__":
     # <<< 수정 시작: 상태 변수를 스케일링된 값으로 저장 >>>
     prev_config_scaled: Optional[Dict[str, float]]
     prev_perf_scaled: Optional[Dict[str, float]]
-    # <<< 수정 끝 >>>
-    current_dependency_weight: float = INITIAL_DEPENDENCY_WEIGHT
+   
 
     # 최고 성능 추적 (스케일링된 값 기준), 처음 시작점은 랜덤으로 설정
-    # find_best_initial_point_scaled
-    best_y_scaled, best_idx_init = find_best_initial_point_scaled(scaled_score_Y_all_np)
-    # best_y_scaled, best_idx_init = select_random_initial_point_scaled(scaled_score_Y_all_np)
-    #best_y_scaled, best_idx_init = find_best_initial_point_scaled(scaled_Y_all_np)
+
+    best_y_scaled, best_idx_init = select_random_initial_point_scaled(scaled_score_Y_all_np)
     best_x_scaled_tensor = train_X[best_idx_init].unsqueeze(0)
 
     ## ((추가)) 결과 저장을 위한 리스트
@@ -373,29 +276,24 @@ if __name__ == "__main__":
             gp_model = get_fitted_model(train_X, train_Y)
         except Exception:
             logger.info("WARN: GP 모델 학습 실패, 이번 반복 건너뜀."); continue
-            history_weights.append(current_dependency_weight)
-            history_best_y_scaled.append(best_y_scaled)
             continue
         # history_best_y_scaled.append(best_y_scaled)
 
         # --- Acquisition Function 준비 ---
-        base_ucb = UpperConfidenceBound(model=gp_model, beta=6.25) # exploration(beta가 커질수록 탐색 범위 넓어짐)
+        #base_ucb = UpperConfidenceBound(model=gp_model, beta=6.25) # exploration(beta가 커질수록 탐색 범위 넓어짐)
         # Acquisition Function: GP(surrogate model)를 입력으로 받음
-        custom_acqf = DependencyWeightedAcquisitionFunction(gp_model, base_ucb, current_dependency_weight)
-        logger.info(f"INFO: 획득 함수 현재 적용 가중치: {current_dependency_weight:.4f}")
-
+        #acqf = UpperConfidenceBound(model=gp_model, beta=6.25)
+        acqf = ExpectedImprovement(model=gp_model, best_f=best_y_scaled, maximize=IS_MAXIMIZATION)
         # --- 다음 후보 지점 탐색 ([0, 1] 스케일) ---
         logger.info("INFO: 다음 후보 지점 탐색 중...")
         try:
             candidate_normalized, acqf_value = optimize_acqf(
-                custom_acqf, bounds=bounds, q=1, num_restarts=10, raw_samples=1024,
+                acqf, bounds=bounds, q=1, num_restarts=10, raw_samples=1024,
                 options={"batch_limit": 5, "maxiter": 200},
             )
             logger.info("INFO: 후보 지점 탐색 완료.")
         except Exception as e:
             logger.info(f"❌ 오류: Acq Func 최적화 중 - {e}\nWARN: 이번 반복 건너뜀."); continue
-            history_weights.append(current_dependency_weight)
-            history_best_y_scaled.append(best_y_scaled)
             continue
 
         # --- 후보 지점 성능 예측 (스케일링된 값 사용) ---
@@ -404,22 +302,11 @@ if __name__ == "__main__":
 
         if curr_perf_dict_scaled is None:
             logger.info("WARN: 후보 지점 성능 예측 실패, 이번 반복 건너뜀.")
-            history_weights.append(current_dependency_weight)
-            history_best_y_scaled.append(best_y_scaled)
             continue
 
         epsilon = 1e-9
-        new_objective_value_scaled: float = curr_perf_dict_scaled['scaled_tps'] / (curr_perf_dict_scaled['scaled_latency']+epsilon)
+        new_objective_value_scaled: float = ((curr_perf_dict_scaled['scaled_tps']*tps_importance) / (curr_perf_dict_scaled['scaled_latency']+epsilon))
         logger.info(f"  - 예측된 성능 (TPS/Latency, 스케일링 값): {new_objective_value_scaled:.4f}")
-
-        # 의존성 가중치 계산
-        curr_config_scaled_dict = {knob_names[i]: scaled_candidate_np[0, i] for i in range(DIM)}
-        logger.info("INFO: 다음 반복을 위한 의존성 가중치 계산")
-        try:
-            next_dependency_weight = calculate_dependency_weight(prev_config_scaled, prev_perf_scaled, curr_config_scaled_dict, curr_perf_dict_scaled, knob_names)
-        except Exception as e:
-            logger.info(f"❌ {e}. 기본 가중치 사용.")
-            next_dependency_weight = INITIAL_DEPENDENCY_WEIGHT
 
 
         # --- GP 데이터 업데이트(새로운 config 추가) ---
@@ -431,14 +318,9 @@ if __name__ == "__main__":
         logger.info(f"INFO: GP 학습 데이터 업데이트 완료. 현재 데이터 수: {train_X.shape[0]}")
 
         # --- 최고 성능 업데이트 (스케일링된 값 기준) ---
-        # print(f"best_y_scaled: {best_y_scaled}")
         objective_value_for_comparison = new_objective_value_scaled if IS_MAXIMIZATION else -new_objective_value_scaled
         best_y_scaled_comparison = best_y_scaled if IS_MAXIMIZATION else -best_y_scaled
 
-        # logger.info(f"objective_value_for_comparison: {objective_value_for_comparison}")
-        # logger.info(f"best_y_scaled_comparison: {best_y_scaled_comparison}")
-        # print(f"objective_value_for_comparison: {objective_value_for_comparison}")
-        # print(f"best_y_scaled_comparison: {best_y_scaled_comparison}")
         if objective_value_for_comparison > best_y_scaled_comparison:
             best_y_scaled = new_objective_value_scaled
             best_x_scaled_tensor = candidate_normalized
@@ -447,14 +329,6 @@ if __name__ == "__main__":
             logger.info(f" L_")
         else:
             logger.info(f"INFO: 최고 성능 유지 (TPS/Latency, 스케일링 값: {best_y_scaled:.4f})")
-
-        prev_config_scaled = curr_config_scaled_dict
-        prev_perf_scaled = curr_perf_dict_scaled
-
-        current_dependency_weight = next_dependency_weight
-
-        history_weights.append(current_dependency_weight)
-        history_best_y_scaled.append(best_y_scaled)
 
 
     # 5. 최종 결과 출력 (역스케일링)
