@@ -432,11 +432,11 @@ if __name__ == "__main__":
 
         # 2) 예측된 성능 역스케일링
         perf_unscaled = y_scaler.inverse_transform(
-            [[curr_perf_dict_scaled['scaled_tps'], curr_perf_dict_scaed['scaled_latency']]]
+            [[curr_perf_dict_scaled['scaled_tps'], curr_perf_dict_scaled['scaled_latency']]]
         )
 
         # 3) CSV 행 구성
-        row = lsit(candidate_unscaled[0]) + list(perf_unscaled[0])
+        row = list(candidate_unscaled[0]) + list(perf_unscaled[0])
 
         # 4) csv file에 append
         with open(HISTORICAL_TUNING_DATA_FILE_PATH, mode='a', newline = '') as f:
