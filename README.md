@@ -4,7 +4,7 @@ Python IDE 실행 터미널에서 아래와 같이 실행.
 실행완료된 log는 data/bo_result에서 저장한 log 파일명으로 확인 가능.
 ```
 cd DBTuner\src\tuning_pipeline\knob_optimization
-pyton run_bo.py --logfile {logfile_name} --workload {workload_name} --alpha {int} --beta {int} -gamma {int} --iter {bo_iteration_num}
+python run_bo.py --logfile {logfile_name} --workload {workload_name} --alpha {int} --beta {int} -gamma {int} --iter {bo_iteration_num}
 ```
 
 **run_bo.py 실행시 argparse**
