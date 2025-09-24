@@ -1,0 +1,11 @@
+A_prev,A_curr,B_prev,B_curr,relation_type
+0.3422,0.7343,0.1,0.4,positive
+0.1112,0.3234,0.456,0.8767,positive
+0.3,0.5,0.3,0.5,positive
+0.2,0.5,0.6,0.4,inverse
+0.4232,0.8776,0.323,0.0976,inverse
+0.6556,0.8777,0.4532,0.1221,inverse
+0.4,0.6,0.4,0.2,threshold
+0.5,0.7,0.5,0.3,threshold
+0.3,0.4,0.3,0.3,threshold
+0.6,0.8,0.5,0.2,threshold
